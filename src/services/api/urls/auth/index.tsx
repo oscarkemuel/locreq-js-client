@@ -6,6 +6,6 @@ export class AuthAPI implements IRequestMethods {
   url = '/auth'
 
   login(data: IPostLogin) {
-    return axiosInstance.post<IPostLoginResponse>(`${this.url}/login`, data)
+    return axiosInstance.post<IPostLoginResponse>(`${this.url}`, data)
   }
 }
