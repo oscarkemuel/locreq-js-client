@@ -1,4 +1,5 @@
 import { APP_ROUTES } from "@/constants/app-routes";
+import { checkUserAuthenticated } from "@/functions/check-user-authenticated";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,7 +10,7 @@ type PrivateRouteProps = {
 const PrivateRoute = ({children}: PrivateRouteProps) => {
   const { push } = useRouter()
 
-  const userIsAuthenticated = false
+  const userIsAuthenticated = checkUserAuthenticated();
 
   useEffect(() => {
     if (!userIsAuthenticated) {

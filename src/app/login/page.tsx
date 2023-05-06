@@ -2,13 +2,21 @@
 
 import api from "@/services/api";
 import { IPostLogin } from "@/services/api/urls/auth/types";
+import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
+import { useRouter } from "next/navigation";
 import { Form, Button, Container, Card } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export default function LoginScreen() {
+  const { push: navigateTo } = useRouter()
+
+  const {
+    actions: { setToken },
+  } = useAuthStore();
+
   const {
     control,
     handleSubmit,
@@ -26,7 +34,8 @@ export default function LoginScreen() {
     },
     {
       onSuccess: ({ data }) => {
-        console.log(data.user.token);
+        setToken(data.user.token);
+        navigateTo("/dashboard");
       },
       onError: (error: any) => {
         toast.error(error.response.data.message);
@@ -88,7 +97,11 @@ export default function LoginScreen() {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" disabled={!isEmpty(errors)}>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={!isEmpty(errors) || mutation.isLoading}
+          >
             Submit
           </Button>
         </Form>
