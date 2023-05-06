@@ -1,7 +1,7 @@
 "use client";
 
 import api from "@/services/api";
-import { IPostLogin } from "@/services/api/urls/auth/types";
+import { IPostUser } from "@/services/api/urls/user/types";
 import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
@@ -10,7 +10,7 @@ import { Form, Button, Container, Card } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const { push: navigateTo } = useRouter()
 
   const {
@@ -21,21 +21,22 @@ export default function LoginScreen() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IPostLogin>({
+  } = useForm<IPostUser>({
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
   const mutation = useMutation(
-    (data: IPostLogin) => {
-      return api.auth.login(data);
+    (data: IPostUser) => {
+      return api.user.post(data);
     },
     {
-      onSuccess: ({ data }) => {
-        setToken(data.user.token);
-        navigateTo("/dashboard");
+      onSuccess: () => {
+        toast.success('Usuário cadastrado com sucesso!');
+        navigateTo("/login");
       },
       onError: (error: any) => {
         toast.error(error.response.data.message);
@@ -48,16 +49,37 @@ export default function LoginScreen() {
   });
 
   return (
-    <Container className="pt-3 d-flex justify-content-center">
+    <Container className="d-flex justify-content-center">
       <Card body>
-        <Card.Title>Entrega System - LOGIN</Card.Title>
+        <Card.Title>Entrega System - REGISTER</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
-          Login to your account
+          Register to access the system
         </Card.Subtitle>
 
         <hr />
 
         <Form onSubmit={onSubmit}>
+        <Form.Group className="mb-3" controlId="formBasicName">
+            <Form.Label>Name</Form.Label>
+            <Controller
+              control={control}
+              name="name"
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <Form.Control
+                  type="name"
+                  placeholder="Enter name"
+                  value={value}
+                  onChange={onChange}
+                  isInvalid={!!errors.name}
+                />
+              )}
+            />
+            <Form.Text className="text-muted">
+              Well never share your email with anyone else.
+            </Form.Text>
+          </Form.Group>
+
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Controller
@@ -102,7 +124,7 @@ export default function LoginScreen() {
             type="submit"
             disabled={!isEmpty(errors) || mutation.isLoading}
           >
-            Submit
+            Register
           </Button>
         </Form>
       </Card>
