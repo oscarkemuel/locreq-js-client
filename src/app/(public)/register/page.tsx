@@ -2,7 +2,6 @@
 
 import api from "@/services/api";
 import { IPostUser } from "@/services/api/urls/user/types";
-import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
 import { useRouter } from "next/navigation";
@@ -12,10 +11,6 @@ import { toast } from "react-toastify";
 
 export default function RegisterScreen() {
   const { push: navigateTo } = useRouter()
-
-  const {
-    actions: { setToken },
-  } = useAuthStore();
 
   const {
     control,

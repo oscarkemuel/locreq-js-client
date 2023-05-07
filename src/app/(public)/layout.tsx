@@ -1,5 +1,6 @@
 "use client";
 
+import { checkUserAuthenticated } from "@/functions/check-user-authenticated";
 import { useRouter } from "next/navigation";
 import { Container, Nav, Navbar } from "react-bootstrap";
 
@@ -9,6 +10,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { push: navigateTo } = useRouter();
+  const userIsAuthenticated = checkUserAuthenticated();
 
   return (
     <>
@@ -22,6 +24,11 @@ export default function DashboardLayout({
             <Nav.Link onClick={() => navigateTo("/register")}>
               Register
             </Nav.Link>
+            {userIsAuthenticated && (
+              <Nav.Link onClick={() => navigateTo("/dashboard")}>
+                Dashboard
+              </Nav.Link>
+            )}
           </Nav>
         </Container>
       </Navbar>
