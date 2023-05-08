@@ -1,7 +1,10 @@
+'use client'
+import { Container } from "react-bootstrap";
+
 export default function DashboardPage() {
   return (
-    <div>
+    <Container>
       <h1>Dashboard</h1>
-    </div>
+    </Container>
   )
 }

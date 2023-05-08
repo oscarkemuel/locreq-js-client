@@ -24,23 +24,16 @@ export default function PublicLayout({
             EntregaSystem
           </Navbar.Brand>
           <Nav>
-            <div className="d-flex align-itens-center justify-content-between">
-              <Nav.Link onClick={() => navigateTo("/login")}>Login</Nav.Link>
-              <Nav.Link onClick={() => navigateTo("/register")}>
-                Register
-              </Nav.Link>
-              {userIsAuthenticated && (
-                <Nav.Link onClick={() => navigateTo("/dashboard")}>
-                  Dashboard
-                </Nav.Link>
-              )}
-            </div>
+            <Nav.Link onClick={() => navigateTo("/dashboard/customer")}>
+              Portal do cliente
+            </Nav.Link>
+            <Nav.Link onClick={() => navigateTo("/dashboard/seller")}>
+              Portal do vendedor
+            </Nav.Link>
 
-            <div>
-              {userIsAuthenticated && (
-                <Nav.Link onClick={logOut}>Logout</Nav.Link>
-              )}
-            </div>
+            {userIsAuthenticated && (
+              <Nav.Link onClick={logOut}>Logout</Nav.Link>
+            )}
           </Nav>
         </Container>
       </Navbar>

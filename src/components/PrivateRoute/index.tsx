@@ -2,6 +2,7 @@ import { APP_ROUTES } from "@/constants/app-routes";
 import { checkUserAuthenticated } from "@/functions/check-user-authenticated";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import LoadingScreen from "../LoadingScreen";
 
 type PrivateRouteProps = {
   children: React.ReactNode;
@@ -20,7 +21,7 @@ const PrivateRoute = ({children}: PrivateRouteProps) => {
 
   return (
     <>
-      {!userIsAuthenticated && null}
+      {!userIsAuthenticated && <LoadingScreen />}
       {userIsAuthenticated && children}
     </>
   )
