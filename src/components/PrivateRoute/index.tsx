@@ -1,8 +1,9 @@
+'use client'
 import { APP_ROUTES } from "@/constants/app-routes";
-import { checkUserAuthenticated } from "@/functions/check-user-authenticated";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import LoadingScreen from "../LoadingScreen";
+import { useAuthStore } from "@/store/auth";
 
 type PrivateRouteProps = {
   children: React.ReactNode;
@@ -10,8 +11,9 @@ type PrivateRouteProps = {
 
 const PrivateRoute = ({children}: PrivateRouteProps) => {
   const { push } = useRouter()
+  const { actions: { getToken } } = useAuthStore()
 
-  const userIsAuthenticated = checkUserAuthenticated();
+  const userIsAuthenticated = !!getToken()
 
   useEffect(() => {
     if (!userIsAuthenticated) {

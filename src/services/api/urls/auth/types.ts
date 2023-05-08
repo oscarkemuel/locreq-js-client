@@ -4,6 +4,7 @@ export type IUser = {
   email: string;
   createdAt: string;
   isAdmin: boolean;
+  rules: ['customer', 'seller']
 }
 
 export type IPostLogin = {
@@ -12,6 +13,13 @@ export type IPostLogin = {
 }
 
 export type IPostLoginResponse = {
+  user: {
+    user: IUser;
+    token: string;
+  }
+}
+
+export type IGetUserByTokenResponse = {
   user: {
     user: IUser;
     token: string;

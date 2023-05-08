@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <h1>Entrega System</h1>
-      <Link href="/dashboard">Acessar sistema</Link>
+      <Link href="/login">Acessar sistema</Link>
     </main>
   )
 }

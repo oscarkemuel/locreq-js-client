@@ -14,7 +14,7 @@ export default function LoginScreen() {
   const { push: navigateTo } = useRouter()
 
   const {
-    actions: { setToken },
+    actions: { login },
   } = useAuthStore();
 
   const {
@@ -34,7 +34,7 @@ export default function LoginScreen() {
     },
     {
       onSuccess: ({ data }) => {
-        setToken(data.user.token);
+        login(data.user.token, data.user.user);
         navigateTo("/dashboard");
       },
       onError: (error: any) => {
