@@ -2,18 +2,25 @@
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { IPostCustomerPlace } from "@/services/api/urls/customer/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import api from "@/services/api";
 import { useRouter } from "next/navigation";
 
-function AddCustomerPlace() {
+interface IProps {
+  params: {
+    id: string;
+  }
+}
+
+function EditCustomerPlace({ params: { id } }: IProps) {
   const { push: navigateTo } = useRouter();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm({
     defaultValues: {
       name: "",
@@ -31,11 +38,11 @@ function AddCustomerPlace() {
 
   const mutation = useMutation(
     (data: IPostCustomerPlace) => {
-      return api.customer.places.post(data);
+      return api.customer.places.put(id, data);
     },
     {
       onSuccess: () => {
-        toast.success("Registered successfully!");
+        toast.success("Updated successfully!");
         navigateTo('/dashboard/customer')
       },
       onError: (error: any) => {
@@ -52,6 +59,21 @@ function AddCustomerPlace() {
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
   });
+
+  function getCustomerPlace() {
+    return api.customer.places.get(id);
+  }
+
+  useQuery(['getCustomerPlace'], getCustomerPlace, {
+    onSuccess: ({ data }) => {
+      const { place } = data
+      const { address } = place
+
+      setValue('name', place.name)
+      setValue('address', address)
+    },
+    enabled: !!id,
+  })
 
   return (
     <Row className="mb-3">
@@ -248,7 +270,7 @@ function AddCustomerPlace() {
 
               <div className="d-flex align-items-center w-100 gap-2">
                 <Button variant="primary" type="submit" disabled={mutation.isLoading}>
-                  Add
+                  Edit
                 </Button>
 
                 <Button variant="danger" onClick={() => navigateTo('/dashboard/customer')}>
@@ -263,4 +285,4 @@ function AddCustomerPlace() {
   );
 }
 
-export default AddCustomerPlace;
+export default EditCustomerPlace;
