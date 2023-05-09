@@ -2,13 +2,16 @@
 import api from "@/services/api";
 import { IPostCustomer } from "@/services/api/urls/customer/types";
 import { useAuthStore } from "@/store/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
+import { useRouter } from "next/navigation";
 import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 function CustomerPage() {
+  const { push: navigateTo } = useRouter();
+
   const {
     state: { user },
     actions: { updateUserInfo },
@@ -44,6 +47,17 @@ function CustomerPage() {
   });
 
   const userIsCustomer = user?.rules?.includes("customer");
+
+  function getMyPlaces() {
+    return api.customer.places.getAll();
+  }
+
+  useQuery(['getMyPlaces'], getMyPlaces, {
+    onSuccess: ({ data }) => {
+      console.log(data)
+    },
+    refetchOnWindowFocus: true
+  })
 
   if (!userIsCustomer) {
     return (
@@ -99,7 +113,11 @@ function CustomerPage() {
     <>
       <Row>
         <Col>
-          <Card style={{ minHeight: "60vh" }}>
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            <h3 className="m-0">Your palces</h3>
+            <Button variant="success" onClick={() => navigateTo('/dashboard/customer/place/add')}>Create place</Button>
+          </div>
+          <Card>
             <Card.Body></Card.Body>
           </Card>
         </Col>
