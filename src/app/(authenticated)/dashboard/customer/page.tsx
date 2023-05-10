@@ -10,11 +10,14 @@ import { useState } from "react";
 import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { MdDelete, MdEdit } from "react-icons/md";
+import { MdArrowOutward, MdDelete, MdEdit } from "react-icons/md";
+import { IDeliveryRequest } from "@/services/api/urls/customer/types";
+import { DELIVERY_STATUS } from "@/constants/delivery-status";
 
 function CustomerPage() {
   const { push: navigateTo } = useRouter();
   const [places, setPlaces] = useState<IPlace[]>([]);
+  const [requests, setRequests] = useState<IDeliveryRequest[]>([]);
 
   const {
     state: { user },
@@ -80,6 +83,20 @@ function CustomerPage() {
       },
     }
   );
+
+  function getMyRequests() {
+    return api.customer.deliveryRequests.getAll();
+  }
+
+  const {
+    refetch: refetchMyRequests,
+    isFetchedAfterMount: myRequestsIsFetchedAfterMount,
+  } = useQuery(["getMyRequests"], getMyRequests, {
+    onSuccess: ({ data }) => {
+      setRequests(data.deliveryRequests);
+    },
+    refetchOnWindowFocus: true,
+  });
 
   if (!userIsCustomer) {
     return (
@@ -161,23 +178,34 @@ function CustomerPage() {
                         {address.city} - {address.state}
                       </Card.Text>
 
-                      <div className="d-flex align-items-center gap-2">
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center gap-2">
+                          <Button
+                            variant="primary"
+                            onClick={() =>
+                              navigateTo(
+                                `/dashboard/customer/place/${place.id}/edit`
+                              )
+                            }
+                          >
+                            <MdEdit />
+                          </Button>
+                          <Button
+                            variant="danger"
+                            onClick={() => deletePlaceMutation.mutate(place.id)}
+                            disabled={deletePlaceMutation.isLoading}
+                          >
+                            <MdDelete />
+                          </Button>
+                        </div>
+
                         <Button
-                          variant="primary"
+                          variant="success"
                           onClick={() =>
-                            navigateTo(
-                              `/dashboard/customer/place/${place.id}/edit`
-                            )
+                            navigateTo(`/dashboard/customer/place/${place.id}`)
                           }
                         >
-                          <MdEdit />
-                        </Button>
-                        <Button
-                          variant="danger"
-                          onClick={() => deletePlaceMutation.mutate(place.id)}
-                          disabled={deletePlaceMutation.isLoading}
-                        >
-                          <MdDelete />
+                          <MdArrowOutward size={22} />
                         </Button>
                       </div>
                     </Card.Body>
@@ -197,29 +225,26 @@ function CustomerPage() {
 
       <Row className="mt-5">
         <Col>
-          <div className="d-flex align-items-center justify-content-between mb-2">
-            <h3 className="m-0">My Requests</h3>
-            <Button
-              disabled
-              variant="success"
-              onClick={() => navigateTo("/dashboard/customer/place/add")}
-            >
-              New Request
-            </Button>
-          </div>
+          <h3 className="m-0 mb-2">My Requests</h3>
           <Card>
             <Card.Body className="d-flex gap-3">
-              {[].map((place) => {
+              {requests.map((request) => {
+                const product = request.Product
                 return (
                   <Card key={"place.id"} style={{ width: "18rem" }}>
+                    <Card.Header>
+                    <Alert variant={DELIVERY_STATUS[request.status]} className="m-auto">
+                      {request.status.toUpperCase()}
+                    </Alert>
+                    </Card.Header>
                     <Card.Body>
-                      <Card.Title>{"place.name"}</Card.Title>
+                      <Card.Title>{product?.name}</Card.Title>
+
                       <Card.Text className="m-0">
-                        {"address.street"}, {"address.neighborhood"} -{" "}
-                        {"address.number"}
+                        <b>Place:</b> {request.place?.name}
                       </Card.Text>
                       <Card.Text>
-                        {"address.city"} - {"address.state"}
+                        <b>Quantity:</b> {request.quantity}
                       </Card.Text>
 
                       <div className="d-flex align-items-center gap-2">
@@ -246,7 +271,7 @@ function CustomerPage() {
                 );
               })}
 
-              {true && (
+              {myRequestsIsFetchedAfterMount && requests.length === 0 && (
                 <Alert variant="warning" className="m-auto">
                   You don't have any request yet!
                 </Alert>

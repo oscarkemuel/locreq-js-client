@@ -1,6 +1,6 @@
 import axiosInstance from "../../axios-instance";
 import { IRequestMethods } from "../../request-methods";
-import { IGetAllPlacesResponse, IGetPlaceResponse, IPostCustomer, IPostCustomerPlace } from "./types";
+import { IGetAllDeliveryRequestsResponse, IGetAllPlacesResponse, IGetPlaceResponse, IPostCustomer, IPostCustomerPlace } from "./types";
 
 export class CustomerAPI implements IRequestMethods {
   url = '/customers'
@@ -28,6 +28,12 @@ export class CustomerAPI implements IRequestMethods {
 
     delete: (id: string) => {
       return axiosInstance.delete(`${this.url}/place/${id}`)
+    }
+  }
+
+  deliveryRequests = {
+    getAll: () => {
+      return axiosInstance.get<IGetAllDeliveryRequestsResponse>(`/delivery-request/my-requests`)
     }
   }
 }
