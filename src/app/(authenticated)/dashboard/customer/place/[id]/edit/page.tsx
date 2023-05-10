@@ -73,6 +73,7 @@ function EditCustomerPlace({ params: { id } }: IProps) {
       setValue('address', address)
     },
     enabled: !!id,
+    refetchOnWindowFocus: false
   })
 
   return (

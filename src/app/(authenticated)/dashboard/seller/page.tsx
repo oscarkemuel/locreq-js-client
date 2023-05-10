@@ -1,14 +1,21 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import api from "@/services/api";
-import { IPostSeller } from "@/services/api/urls/seller/types";
+import { IPostSeller, IProduct } from "@/services/api/urls/seller/types";
 import { useAuthStore } from "@/store/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
+import { MdDelete, MdEdit } from "react-icons/md";
 import { toast } from "react-toastify";
 
 function SellerPage() {
+  const { push: navigateTo } = useRouter();
+  const [products, setProducts] = useState<IProduct[]>([]);
+
   const {
     state: { user },
     actions: { updateUserInfo },
@@ -58,6 +65,35 @@ function SellerPage() {
   });
 
   const userIsSeller = user?.rules?.includes("seller");
+
+  function getMyProducts() {
+    return api.seller.products.getAll();
+  }
+
+  const {
+    refetch: refetchMyProducts,
+    isFetchedAfterMount: myProductsIsFetchedAfterMount,
+  } = useQuery(["getMyProducts"], getMyProducts, {
+    onSuccess: ({ data }) => {
+      setProducts(data.products);
+    },
+    refetchOnWindowFocus: true,
+  });
+
+  const deleteProductMutation = useMutation(
+    (id: string) => {
+      return api.seller.products.delete(id);
+    },
+    {
+      onSuccess: () => {
+        refetchMyProducts();
+        toast.success("Product deleted successfully!");
+      },
+      onError: (error: any) => {
+        toast.error(error.response.data.message);
+      },
+    }
+  );
 
   if (!userIsSeller) {
     return (
@@ -283,8 +319,64 @@ function SellerPage() {
     <>
       <Row>
         <Col>
-          <Card style={{ minHeight: "60vh" }}>
-            <Card.Body></Card.Body>
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            <h3 className="m-0">My Products</h3>
+            <Button
+              variant="success"
+              onClick={() => navigateTo("/dashboard/seller/product/add")}
+            >
+              New Product
+            </Button>
+          </div>
+          <Card>
+            <Card.Body className="d-flex gap-3">
+              {products.map((product) => {
+                return (
+                  <Card key={product.id} style={{ width: "18rem" }}>
+                    <Card.Body>
+                      <Card.Title>{product.name}</Card.Title>
+                      <Card.Text className="m-0">
+                        {product.description}
+                      </Card.Text>
+                      <Card.Text className="m-0">
+                        <b>Price:</b> R${product.price}
+                      </Card.Text>
+                      <Card.Text>
+                        <b>Stock:</b> {product.quantity}
+                      </Card.Text>
+
+                      <div className="d-flex align-items-center gap-2">
+                        <Button
+                          variant="primary"
+                          onClick={() =>
+                            navigateTo(
+                              `/dashboard/seller/product/${product.id}/edit`
+                            )
+                          }
+                        >
+                          <MdEdit />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() =>
+                            deleteProductMutation.mutate(product.id)
+                          }
+                          disabled={deleteProductMutation.isLoading}
+                        >
+                          <MdDelete />
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+
+              {myProductsIsFetchedAfterMount && products.length === 0 && (
+                <Alert variant="warning" className="m-auto">
+                  You don't have any product yet!
+                </Alert>
+              )}
+            </Card.Body>
           </Card>
         </Col>
       </Row>
