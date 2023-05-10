@@ -1,14 +1,21 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import api from "@/services/api";
-import { IPostCustomer } from "@/services/api/urls/customer/types";
+import { IPlace, IPostCustomer } from "@/services/api/urls/customer/types";
 import { useAuthStore } from "@/store/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { MdDelete, MdEdit } from "react-icons/md";
 
 function CustomerPage() {
+  const { push: navigateTo } = useRouter();
+  const [places, setPlaces] = useState<IPlace[]>([]);
+
   const {
     state: { user },
     actions: { updateUserInfo },
@@ -44,6 +51,35 @@ function CustomerPage() {
   });
 
   const userIsCustomer = user?.rules?.includes("customer");
+
+  function getMyPlaces() {
+    return api.customer.places.getAll();
+  }
+
+  const {
+    refetch: refetchMyPlaces,
+    isFetchedAfterMount: myPlacesIsFetchedAfterMount,
+  } = useQuery(["getMyPlaces"], getMyPlaces, {
+    onSuccess: ({ data }) => {
+      setPlaces(data.places);
+    },
+    refetchOnWindowFocus: true,
+  });
+
+  const deletePlaceMutation = useMutation(
+    (id: string) => {
+      return api.customer.places.delete(id);
+    },
+    {
+      onSuccess: () => {
+        refetchMyPlaces();
+        toast.success("Place deleted successfully!");
+      },
+      onError: (error: any) => {
+        toast.error(error.response.data.message);
+      },
+    }
+  );
 
   if (!userIsCustomer) {
     return (
@@ -99,8 +135,123 @@ function CustomerPage() {
     <>
       <Row>
         <Col>
-          <Card style={{ minHeight: "60vh" }}>
-            <Card.Body></Card.Body>
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            <h3 className="m-0">My places</h3>
+            <Button
+              variant="success"
+              onClick={() => navigateTo("/dashboard/customer/place/add")}
+            >
+              Create place
+            </Button>
+          </div>
+          <Card>
+            <Card.Body className="d-flex gap-3">
+              {places.map((place) => {
+                const { address } = place;
+
+                return (
+                  <Card key={place.id} style={{ width: "18rem" }}>
+                    <Card.Body>
+                      <Card.Title>{place.name}</Card.Title>
+                      <Card.Text className="m-0">
+                        {address.street}, {address.neighborhood} -{" "}
+                        {address.number}
+                      </Card.Text>
+                      <Card.Text>
+                        {address.city} - {address.state}
+                      </Card.Text>
+
+                      <div className="d-flex align-items-center gap-2">
+                        <Button
+                          variant="primary"
+                          onClick={() =>
+                            navigateTo(
+                              `/dashboard/customer/place/${place.id}/edit`
+                            )
+                          }
+                        >
+                          <MdEdit />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => deletePlaceMutation.mutate(place.id)}
+                          disabled={deletePlaceMutation.isLoading}
+                        >
+                          <MdDelete />
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+
+              {myPlacesIsFetchedAfterMount && places.length === 0 && (
+                <Alert variant="warning" className="m-auto">
+                  You don't have any place yet!
+                </Alert>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row className="mt-5">
+        <Col>
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            <h3 className="m-0">My Requests</h3>
+            <Button
+              disabled
+              variant="success"
+              onClick={() => navigateTo("/dashboard/customer/place/add")}
+            >
+              New Request
+            </Button>
+          </div>
+          <Card>
+            <Card.Body className="d-flex gap-3">
+              {[].map((place) => {
+                return (
+                  <Card key={"place.id"} style={{ width: "18rem" }}>
+                    <Card.Body>
+                      <Card.Title>{"place.name"}</Card.Title>
+                      <Card.Text className="m-0">
+                        {"address.street"}, {"address.neighborhood"} -{" "}
+                        {"address.number"}
+                      </Card.Text>
+                      <Card.Text>
+                        {"address.city"} - {"address.state"}
+                      </Card.Text>
+
+                      <div className="d-flex align-items-center gap-2">
+                        <Button
+                          variant="primary"
+                          onClick={() =>
+                            navigateTo(
+                              `/dashboard/customer/place/${"place.id"}/edit`
+                            )
+                          }
+                        >
+                          <MdEdit />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => deletePlaceMutation.mutate("place.id")}
+                          disabled={deletePlaceMutation.isLoading}
+                        >
+                          <MdDelete />
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+
+              {true && (
+                <Alert variant="warning" className="m-auto">
+                  You don't have any request yet!
+                </Alert>
+              )}
+            </Card.Body>
           </Card>
         </Col>
       </Row>
