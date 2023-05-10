@@ -11,3 +11,26 @@ export type IAddress = {
 export type IPostSeller = {
   phone: string;
 }
+
+export type IProduct = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+}
+
+export type IPostProduct = {
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+}
+
+export type IGetAllProducts = {
+  products: IProduct[];
+}
+
+export type IGetProduct = {
+  product: IProduct;
+}
