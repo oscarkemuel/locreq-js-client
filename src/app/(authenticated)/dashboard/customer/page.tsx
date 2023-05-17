@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Alert, Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { MdArrowOutward, MdDelete, MdEdit } from "react-icons/md";
+import { MdArrowOutward, MdClose, MdDelete, MdEdit } from "react-icons/md";
 import { IDeliveryRequest } from "@/services/api/urls/customer/types";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
 
@@ -97,6 +97,21 @@ function CustomerPage() {
     },
     refetchOnWindowFocus: true,
   });
+
+  const cancelRequestMutation = useMutation(
+    (id: string) => {
+      return api.customer.deliveryRequests.cancel(id);
+    },
+    {
+      onSuccess: () => {
+        refetchMyRequests();
+        toast.success("Request canceled successfully!");
+      },
+      onError: (error: any) => {
+        toast.error(error.response.data.message);
+      },
+    }
+  );
 
   if (!userIsCustomer) {
     return (
@@ -231,7 +246,7 @@ function CustomerPage() {
               {requests.map((request) => {
                 const product = request.Product
                 return (
-                  <Card key={"place.id"} style={{ width: "18rem" }}>
+                  <Card key={request.id} style={{ width: "18rem" }}>
                     <Card.Header>
                     <Alert variant={DELIVERY_STATUS[request.status]} className="m-auto">
                       {request.status.toUpperCase()}
@@ -250,21 +265,19 @@ function CustomerPage() {
                       <div className="d-flex align-items-center gap-2">
                         <Button
                           variant="primary"
-                          onClick={() =>
-                            navigateTo(
-                              `/dashboard/customer/place/${"place.id"}/edit`
-                            )
-                          }
+                          disabled
                         >
                           <MdEdit />
                         </Button>
-                        <Button
+                        {request.status == 'pending' && (
+                          <Button
                           variant="danger"
-                          onClick={() => deletePlaceMutation.mutate("place.id")}
-                          disabled={deletePlaceMutation.isLoading}
+                          onClick={() => cancelRequestMutation.mutate(request.id)}
+                          disabled={cancelRequestMutation.isLoading}
                         >
-                          <MdDelete />
+                          <MdClose size={22} />
                         </Button>
+                        )}
                       </div>
                     </Card.Body>
                   </Card>

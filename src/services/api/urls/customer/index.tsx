@@ -1,6 +1,6 @@
 import axiosInstance from "../../axios-instance";
 import { IRequestMethods } from "../../request-methods";
-import { IGetAllDeliveryRequestsResponse, IGetAllPlacesResponse, IGetPlaceResponse, IPostCustomer, IPostCustomerPlace } from "./types";
+import { IGetAllDeliveryRequestsResponse, IGetAllPlacesResponse, IGetPlaceResponse, IGetSearchSellersResponse, IPostCustomer, IPostCustomerPlace } from "./types";
 
 export class CustomerAPI implements IRequestMethods {
   url = '/customers'
@@ -28,12 +28,24 @@ export class CustomerAPI implements IRequestMethods {
 
     delete: (id: string) => {
       return axiosInstance.delete(`${this.url}/place/${id}`)
+    },
+
+    searchSellers: (id: string) => {
+      return axiosInstance.get<IGetSearchSellersResponse>(`${this.url}/place/${id}/nearby-sellers`)
     }
   }
 
   deliveryRequests = {
     getAll: () => {
       return axiosInstance.get<IGetAllDeliveryRequestsResponse>(`/delivery-request/my-requests`)
+    },
+
+    cancel: (id: string) => {
+      return axiosInstance.put(`/delivery-request/cancel/${id}`, {})
+    },
+
+    getByPlace(id: string) {
+      return axiosInstance.get<IGetAllDeliveryRequestsResponse>(`/delivery-request/place/${id}`)
     }
   }
 }

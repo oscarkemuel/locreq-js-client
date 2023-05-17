@@ -27,7 +27,7 @@ export type IDeliveryRequest = {
   id: string;
   quantity: number;
   delivery_time: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'delivered';
+  status: 'pending' | 'accepted' | 'rejected' | 'delivered' | 'canceled';
   placeId: string;
   sellerId: string;
   customerId: string;
@@ -44,4 +44,20 @@ export type IDeliveryRequest = {
 
 export type IGetAllDeliveryRequestsResponse = {
   deliveryRequests: IDeliveryRequest[];
+}
+
+export type Seller = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+}
+
+export type SellerWithAddress = {
+  seller: Seller;
+  address: IAddress;
+}
+
+export type IGetSearchSellersResponse = {
+  sellers: SellerWithAddress[]
 }
