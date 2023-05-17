@@ -1,6 +1,6 @@
 import axiosInstance from "../../axios-instance";
 import { IRequestMethods } from "../../request-methods";
-import { IGetAllDeliveryRequestsResponse, IGetAllPlacesResponse, IGetPlaceResponse, IGetSearchSellersResponse, IPostCustomer, IPostCustomerPlace } from "./types";
+import { IGetAllDeliveryRequestsResponse, IGetAllPlacesResponse, IGetPlaceResponse, IGetSearchSellersResponse, IPostCustomer, IPostCustomerPlace, IPostDeliveryRequest } from "./types";
 
 export class CustomerAPI implements IRequestMethods {
   url = '/customers'
@@ -46,6 +46,10 @@ export class CustomerAPI implements IRequestMethods {
 
     getByPlace(id: string) {
       return axiosInstance.get<IGetAllDeliveryRequestsResponse>(`/delivery-request/place/${id}`)
+    },
+
+    post: (data: IPostDeliveryRequest) => {
+      return axiosInstance.post(`/delivery-request`, data)
     }
   }
 }

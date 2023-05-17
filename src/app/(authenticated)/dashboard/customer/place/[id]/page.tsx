@@ -2,12 +2,24 @@
 "use client";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
 import api from "@/services/api";
-import { IDeliveryRequest, IGetSearchSellersResponse, Seller, SellerWithAddress } from "@/services/api/urls/customer/types";
+import {
+  IDeliveryRequest,
+  IGetSearchSellersResponse,
+  Seller,
+  SellerWithAddress,
+} from "@/services/api/urls/customer/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Alert, Button, Card, Col, Row } from "react-bootstrap";
-import { MdAttachMoney, MdClose, MdDelete, MdEdit, MdPerson, MdSearch } from "react-icons/md";
+import {
+  MdAttachMoney,
+  MdClose,
+  MdDelete,
+  MdEdit,
+  MdPerson,
+  MdSearch,
+} from "react-icons/md";
 import { toast } from "react-toastify";
 
 interface IProps {
@@ -34,7 +46,6 @@ function CustomerPlacePage({ params: { id } }: IProps) {
     },
     refetchOnWindowFocus: true,
   });
-
 
   function getMyRequests() {
     return api.customer.deliveryRequests.getByPlace(id);
@@ -71,29 +82,38 @@ function CustomerPlacePage({ params: { id } }: IProps) {
         <Col>
           <h3 className="m-0 mb-2">Sellers around</h3>
           <Card>
-            <Card.Body className="d-flex gap-3">
+            <Card.Body className="d-flex gap-3 flex-wrap">
               {sellers.map((seller) => {
                 return (
                   <Card key={seller.seller.id} style={{ width: "18rem" }}>
                     <Card.Header className="d-flex align-items-end">
-                      <MdPerson size={28}/>
+                      <MdPerson size={28} />
                       {seller.seller.name}
                     </Card.Header>
-                    <Card.Body>
-                      <Card.Text className="mb-0">
-                        <b>Name:</b> {seller.seller.name}
-                      </Card.Text>
+                    <Card.Body className="d-flex flex-column justify-content-between gap-3">
+                      <div>
+                        <Card.Text className="mb-0">
+                          <b>Name:</b> {seller.seller.name}
+                        </Card.Text>
 
-                      <Card.Text className="mb-0">
-                        <b>Phone:</b> {seller.seller.phone}
-                      </Card.Text>
+                        <Card.Text className="mb-0">
+                          <b>Phone:</b> {seller.seller.phone}
+                        </Card.Text>
 
-                      <Card.Text>
-                        <b>Email:</b> {seller.seller.email}
-                      </Card.Text>
+                        <Card.Text>
+                          <b>Email:</b> {seller.seller.email}
+                        </Card.Text>
+                      </div>
 
                       <div className="d-flex align-items-center gap-2">
-                        <Button variant="primary">
+                        <Button
+                          variant="primary"
+                          onClick={() =>
+                            navigateTo(
+                              `/dashboard/customer/place/${id}/${seller.seller.id}`
+                            )
+                          }
+                        >
                           <MdAttachMoney size={25} />
                         </Button>
                       </div>
@@ -112,15 +132,15 @@ function CustomerPlacePage({ params: { id } }: IProps) {
         </Col>
       </Row>
 
-      <Row className="mt-5">
+      <Row className="my-5">
         <Col>
           <h3 className="m-0 mb-2">My Requests</h3>
           <Card>
-            <Card.Body className="d-flex gap-3">
+            <Card.Body className="d-flex gap-3 flex-wrap">
               {requests.map((request) => {
                 const product = request.Product;
                 return (
-                  <Card key={request.id} style={{ width: "18rem" }}>
+                  <Card key={request.id} style={{ width: "16rem" }}>
                     <Card.Header>
                       <Alert
                         variant={DELIVERY_STATUS[request.status]}
@@ -132,25 +152,26 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                     <Card.Body>
                       <Card.Title>{product?.name}</Card.Title>
 
+                      <Card.Text className="m-0">
+                        <b>Seller:</b> {request.seller?.user.name}
+                      </Card.Text>
                       <Card.Text>
                         <b>Quantity:</b> {request.quantity}
                       </Card.Text>
 
                       <div className="d-flex align-items-center gap-2">
-                        <Button variant="primary" disabled>
-                          <MdEdit />
+                        <Button
+                          variant="danger"
+                          onClick={() =>
+                            cancelRequestMutation.mutate(request.id)
+                          }
+                          disabled={
+                            cancelRequestMutation.isLoading ||
+                            request.status !== "pending"
+                          }
+                        >
+                          <MdClose size={22} />
                         </Button>
-                        {request.status == "pending" && (
-                          <Button
-                            variant="danger"
-                            onClick={() =>
-                              cancelRequestMutation.mutate(request.id)
-                            }
-                            disabled={cancelRequestMutation.isLoading}
-                          >
-                            <MdClose size={22} />
-                          </Button>
-                        )}
                       </div>
                     </Card.Body>
                   </Card>

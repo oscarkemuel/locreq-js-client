@@ -177,12 +177,12 @@ function CustomerPage() {
             </Button>
           </div>
           <Card>
-            <Card.Body className="d-flex gap-3">
+            <Card.Body className="d-flex gap-3 flex-wrap">
               {places.map((place) => {
                 const { address } = place;
 
                 return (
-                  <Card key={place.id} style={{ width: "18rem" }}>
+                  <Card key={place.id} style={{ minWidth: "18rem" }}>
                     <Card.Body>
                       <Card.Title>{place.name}</Card.Title>
                       <Card.Text className="m-0">
@@ -238,23 +238,29 @@ function CustomerPage() {
         </Col>
       </Row>
 
-      <Row className="mt-5">
+      <Row className="my-5">
         <Col>
           <h3 className="m-0 mb-2">My Requests</h3>
           <Card>
-            <Card.Body className="d-flex gap-3">
+            <Card.Body className="d-flex gap-3 flex-wrap">
               {requests.map((request) => {
-                const product = request.Product
+                const product = request.Product;
                 return (
-                  <Card key={request.id} style={{ width: "18rem" }}>
+                  <Card key={request.id} style={{ width: "16rem" }}>
                     <Card.Header>
-                    <Alert variant={DELIVERY_STATUS[request.status]} className="m-auto">
-                      {request.status.toUpperCase()}
-                    </Alert>
+                      <Alert
+                        variant={DELIVERY_STATUS[request.status]}
+                        className="m-auto"
+                      >
+                        {request.status.toUpperCase()}
+                      </Alert>
                     </Card.Header>
                     <Card.Body>
                       <Card.Title>{product?.name}</Card.Title>
 
+                      <Card.Text className="m-0">
+                        <b>Seller:</b> {request.seller?.user.name}
+                      </Card.Text>
                       <Card.Text className="m-0">
                         <b>Place:</b> {request.place?.name}
                       </Card.Text>
@@ -263,21 +269,15 @@ function CustomerPage() {
                       </Card.Text>
 
                       <div className="d-flex align-items-center gap-2">
-                        <Button
-                          variant="primary"
-                          disabled
-                        >
-                          <MdEdit />
-                        </Button>
-                        {request.status == 'pending' && (
                           <Button
-                          variant="danger"
-                          onClick={() => cancelRequestMutation.mutate(request.id)}
-                          disabled={cancelRequestMutation.isLoading}
-                        >
-                          <MdClose size={22} />
-                        </Button>
-                        )}
+                            variant="danger"
+                            onClick={() =>
+                              cancelRequestMutation.mutate(request.id)
+                            }
+                            disabled={cancelRequestMutation.isLoading || request.status !== "pending"}
+                          >
+                            <MdClose size={22} />
+                          </Button>
                       </div>
                     </Card.Body>
                   </Card>

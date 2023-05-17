@@ -1,3 +1,4 @@
+import { IUser } from "../auth/types";
 import { IAddress, IProduct } from "../seller/types";
 
 export type IPostCustomer = {
@@ -38,6 +39,7 @@ export type IDeliveryRequest = {
     phone: string;
     userId: string;
     addressId: string;
+    user: IUser;
   }
   Product?: IProduct;
 }
@@ -60,4 +62,10 @@ export type SellerWithAddress = {
 
 export type IGetSearchSellersResponse = {
   sellers: SellerWithAddress[]
+}
+
+export type IPostDeliveryRequest = {
+  quantity: number;
+  placeId: string;
+  productId: string;
 }

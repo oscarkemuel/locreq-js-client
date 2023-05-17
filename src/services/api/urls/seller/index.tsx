@@ -28,6 +28,10 @@ export class SellerAPI implements IRequestMethods {
 
     delete: (id: string) => {
       return axiosInstance.delete(`${this.url}/products/${id}`)
+    },
+
+    getBySeller: (id: string) => {
+      return axiosInstance.get<IGetAllProducts>(`${this.url}/${id}/products`)
     }
   }
 }
