@@ -36,6 +36,13 @@ const axiosInstance = (axiosInstanceCreated: AxiosInstance) => {
     },
     delete: function <T>(url: string, config: AxiosRequestConfig = {}) {
       return axiosInstanceCreated.delete<T>(url, config);
+    },
+    patch: function <T>(
+      url: string,
+      body: unknown,
+      config: AxiosRequestConfig = {}
+    ) {
+      return axiosInstanceCreated.patch<T>(url, body, config);
     }
   };
 };

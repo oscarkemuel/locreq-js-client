@@ -1,6 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import {
+  DELIVERY_STATUS,
+  OPTIONS_DELIVERY_STATUS,
+} from "@/constants/delivery-status";
 import api from "@/services/api";
+import { IDeliveryRequest, IStatus } from "@/services/api/urls/customer/types";
 import { IPostSeller, IProduct } from "@/services/api/urls/seller/types";
 import { useAuthStore } from "@/store/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -15,6 +20,7 @@ import { toast } from "react-toastify";
 function SellerPage() {
   const { push: navigateTo } = useRouter();
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [deliveries, setDeliveries] = useState<IDeliveryRequest[]>([]);
 
   const {
     state: { user },
@@ -94,6 +100,40 @@ function SellerPage() {
       },
     }
   );
+
+  function getDeliveries() {
+    return api.seller.deliveryRequests.getAll();
+  }
+
+  const {
+    refetch: refetchDeliveries,
+    isFetchedAfterMount: deliveriesIsFetchedAfterMount,
+  } = useQuery(["getDeliveries"], getDeliveries, {
+    onSuccess: ({ data }) => {
+      setDeliveries(data.deliveryRequests);
+    },
+    refetchOnWindowFocus: true,
+  });
+  
+
+  const updateDeliveryStatusMutation = useMutation(
+    (data: { id: string, status: IStatus }) => {
+      return api.seller.deliveryRequests.updateStatus(data.id, {status: data.status});
+    },
+    {
+      onSuccess: () => {
+        refetchDeliveries();
+        toast.success("Status updated successfully!");
+      },
+      onError: (error: any) => {
+        toast.error(error.response.data.message);
+      },
+    }
+  );
+
+  const handleClickUpdateStatus = (id: string, status: IStatus) => {
+    updateDeliveryStatusMutation.mutate({id, status});
+  }
 
   if (!userIsSeller) {
     return (
@@ -374,6 +414,71 @@ function SellerPage() {
               {myProductsIsFetchedAfterMount && products.length === 0 && (
                 <Alert variant="warning" className="m-auto">
                   You don't have any product yet!
+                </Alert>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row className="my-5">
+        <Col>
+          <h3 className="m-0 mb-2">My Deliveries</h3>
+          <Card>
+            <Card.Body className="d-flex gap-3 flex-wrap">
+              {deliveries.map((request) => {
+                const product = request.Product;
+                const address = request.place?.address;
+
+                return (
+                  <Card key={request.id} style={{ width: "20rem" }}>
+                    <Card.Header>
+                      <Alert
+                        variant={DELIVERY_STATUS[request.status]}
+                        className="m-auto"
+                      >
+                        {request.status.toUpperCase()}
+                      </Alert>
+                    </Card.Header>
+                    <Card.Body>
+                      <Card.Title>{product?.name}</Card.Title>
+
+                      <Card.Text className="m-0">
+                        <b>Customer:</b> {request.customer?.user.name}
+                      </Card.Text>
+                      <Card.Text className="m-0">
+                        <b>Adderss:</b> <br />
+                        {address?.street}, {address?.number}
+                        {" - "} {address?.neighborhood} - {address?.city}/
+                        {address?.state}
+                      </Card.Text>
+                      <Card.Text>
+                        <b>Quantity:</b> {request.quantity}
+                      </Card.Text>
+
+                      <div className="d-flex flex-column gap-2 w-100">
+                        {OPTIONS_DELIVERY_STATUS.map((option) => {
+                          return (
+                            <Button
+                              variant={option.variant}
+                              className="w-100"
+                              onClick={() => handleClickUpdateStatus(request.id, option.value)}
+                              key={option.value}
+                              disabled={request.status === option.value || request.status === "canceled"}
+                            >
+                              {option.label}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+
+              {deliveriesIsFetchedAfterMount && deliveries.length === 0 && (
+                <Alert variant="warning" className="m-auto">
+                  You don't have any deliveries yet!
                 </Alert>
               )}
             </Card.Body>

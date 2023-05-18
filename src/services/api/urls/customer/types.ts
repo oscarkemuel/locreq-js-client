@@ -24,11 +24,13 @@ export type IGetPlaceResponse = {
   place: IPlace;
 }
 
+export type IStatus = 'pending' | 'accepted' | 'rejected' | 'delivered' | 'canceled'
+
 export type IDeliveryRequest = {
   id: string;
   quantity: number;
   delivery_time: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'delivered' | 'canceled';
+  status: IStatus;
   placeId: string;
   sellerId: string;
   customerId: string;
@@ -40,6 +42,13 @@ export type IDeliveryRequest = {
     userId: string;
     addressId: string;
     user: IUser;
+  }
+  customer?: {
+    id: string;
+    phone: string;
+    userId: string;
+    user: IUser;
+    
   }
   Product?: IProduct;
 }

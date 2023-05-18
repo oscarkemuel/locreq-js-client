@@ -1,3 +1,5 @@
+import { IDeliveryRequest, IStatus } from "../customer/types";
+
 export type IAddress = {
   street: string;
   number: string;
@@ -33,4 +35,12 @@ export type IGetAllProducts = {
 
 export type IGetProduct = {
   product: IProduct;
+}
+
+export type IPatchDeliveryStatus = {
+  status: IStatus;
+}
+
+export type IGetAllDeliveriesResponse = {
+  deliveryRequests: IDeliveryRequest[];
 }
