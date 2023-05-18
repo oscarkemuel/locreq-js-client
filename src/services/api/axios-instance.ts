@@ -15,6 +15,16 @@ instance.interceptors.request.use((config) => {
   return config;
 })
 
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response.status === 401) {
+      useAuthStore.getState().actions.logOut();
+    }
+    return Promise.reject(error);
+  }
+);
+
 const axiosInstance = (axiosInstanceCreated: AxiosInstance) => {
   return {
     get: function <T>(url: string, config: AxiosRequestConfig = {}) {
