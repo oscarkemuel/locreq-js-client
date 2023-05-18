@@ -78,3 +78,13 @@ export type IPostDeliveryRequest = {
   placeId: string;
   productId: string;
 }
+
+export type IPostFeedbackSeller = {
+  rating: number;
+  comment: string;
+  sellerId: string;
+}
+
+export type IGetCustomerHasFeedbackReponse = {
+  hasFeedback: boolean;
+}

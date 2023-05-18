@@ -121,7 +121,7 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
             <Button
               variant="primary"
               type="submit"
-              // disabled={!isEmpty(errors) || mutation.isLoading}
+              disabled={!isEmpty(errors) || mutation.isLoading}
             >
               Send
             </Button>
@@ -136,7 +136,7 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
       {formModal}
       <Row>
         <Col>
-          <h3 className="m-0 mb-2">My Products</h3>
+          <h3 className="m-0 mb-2">Products</h3>
           <Card>
             <Card.Body className="d-flex gap-3">
               {products.map((product) => {

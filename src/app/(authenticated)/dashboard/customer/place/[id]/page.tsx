@@ -9,6 +9,7 @@ import {
   SellerWithAddress,
 } from "@/services/api/urls/customer/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Alert, Button, Card, Col, Row } from "react-bootstrap";
@@ -88,7 +89,9 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                   <Card key={seller.seller.id} style={{ width: "18rem" }}>
                     <Card.Header className="d-flex align-items-end">
                       <MdPerson size={28} />
-                      {seller.seller.name}
+                      <Link href={`/dashboard/seller/${seller.seller.id}`}>
+                          {seller.seller.name}
+                        </Link>
                     </Card.Header>
                     <Card.Body className="d-flex flex-column justify-content-between gap-3">
                       <div>
@@ -153,7 +156,10 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                       <Card.Title>{product?.name}</Card.Title>
 
                       <Card.Text className="m-0">
-                        <b>Seller:</b> {request.seller?.user.name}
+                        <b>Seller: </b>
+                        <Link href={`/dashboard/seller/${request?.seller?.id}`}>
+                          {request?.seller?.user.name}
+                        </Link>
                       </Card.Text>
                       <Card.Text>
                         <b>Quantity:</b> {request.quantity}

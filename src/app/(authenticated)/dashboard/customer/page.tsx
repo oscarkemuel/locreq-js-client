@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { MdArrowOutward, MdClose, MdDelete, MdEdit } from "react-icons/md";
 import { IDeliveryRequest } from "@/services/api/urls/customer/types";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
+import Link from "next/link";
 
 function CustomerPage() {
   const { push: navigateTo } = useRouter();
@@ -259,7 +260,10 @@ function CustomerPage() {
                       <Card.Title>{product?.name}</Card.Title>
 
                       <Card.Text className="m-0">
-                        <b>Seller:</b> {request.seller?.user.name}
+                        <b>Seller:</b>{" "}
+                        <Link href={`/dashboard/seller/${request?.seller?.id}`}>
+                          {request?.seller?.user.name}
+                        </Link>
                       </Card.Text>
                       <Card.Text className="m-0">
                         <b>Place:</b> {request.place?.name}
@@ -269,15 +273,18 @@ function CustomerPage() {
                       </Card.Text>
 
                       <div className="d-flex align-items-center gap-2">
-                          <Button
-                            variant="danger"
-                            onClick={() =>
-                              cancelRequestMutation.mutate(request.id)
-                            }
-                            disabled={cancelRequestMutation.isLoading || request.status !== "pending"}
-                          >
-                            <MdClose size={22} />
-                          </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() =>
+                            cancelRequestMutation.mutate(request.id)
+                          }
+                          disabled={
+                            cancelRequestMutation.isLoading ||
+                            request.status !== "pending"
+                          }
+                        >
+                          <MdClose size={22} />
+                        </Button>
                       </div>
                     </Card.Body>
                   </Card>

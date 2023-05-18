@@ -4,6 +4,7 @@ import {
   IGetAllDeliveriesResponse,
   IGetAllProducts,
   IGetProduct,
+  IGetSellerPerfil,
   IPatchDeliveryStatus,
   IPostProduct,
   IPostSeller,
@@ -14,6 +15,10 @@ export class SellerAPI implements IRequestMethods {
 
   post(data: IPostSeller) {
     return axiosInstance.post(`${this.url}`, data);
+  }
+
+  getPerfil(id: string) {
+    return axiosInstance.get<IGetSellerPerfil>(`${this.url}/${id}/perfil`);
   }
 
   products = {

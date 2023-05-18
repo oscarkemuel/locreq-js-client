@@ -1,3 +1,4 @@
+import { IUser } from "../auth/types";
 import { IDeliveryRequest, IStatus } from "../customer/types";
 
 export type IAddress = {
@@ -43,4 +44,29 @@ export type IPatchDeliveryStatus = {
 
 export type IGetAllDeliveriesResponse = {
   deliveryRequests: IDeliveryRequest[];
+}
+
+export type IFeedbackSeller = {
+  id: string;
+  comment?: string;
+  rating: number;
+  customerId: string;
+  sellerId: string;
+  customer: {
+    phone: string;
+    user: IUser;
+  }
+}
+
+export type ISellerPerfil = {
+  user: IUser;
+  userId: string;
+  phone: string;
+  id: string;
+  FeedbackSeller: IFeedbackSeller[];
+  address: IAddress;
+}
+
+export type IGetSellerPerfil = {
+  seller: ISellerPerfil
 }
