@@ -62,6 +62,7 @@ export type Seller = {
   name: string;
   phone: string;
   email: string;
+  favorities: string[];
 }
 
 export type SellerWithAddress = {

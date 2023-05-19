@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import { FavoriteSeller } from "@/components/FavoriteSeller";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
 import api from "@/services/api";
 import {
   IDeliveryRequest,
-  IGetSearchSellersResponse,
-  Seller,
   SellerWithAddress,
 } from "@/services/api/urls/customer/types";
+import { useAuthStore } from "@/store/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,10 @@ function CustomerPlacePage({ params: { id } }: IProps) {
   const { push: navigateTo } = useRouter();
   const [requests, setRequests] = useState<IDeliveryRequest[]>([]);
   const [sellers, setSellers] = useState<SellerWithAddress[]>([]);
+
+  const {
+    state: { user },
+  } = useAuthStore();
 
   function searchSellers() {
     return api.customer.places.searchSellers(id);
@@ -85,13 +89,23 @@ function CustomerPlacePage({ params: { id } }: IProps) {
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {sellers.map((seller) => {
+                const isFavorite =
+                  seller.seller.favorities.filter((f) => f === user?.id)
+                    .length > 0;
+
                 return (
                   <Card key={seller.seller.id} style={{ width: "18rem" }}>
-                    <Card.Header className="d-flex align-items-end">
+                    <Card.Header className="d-flex align-items-end  ">
                       <MdPerson size={28} />
                       <Link href={`/dashboard/seller/${seller.seller.id}`}>
-                          {seller.seller.name}
-                        </Link>
+                        {seller.seller.name}
+                      </Link>
+                      <FavoriteSeller
+                        isFavorite={isFavorite || false}
+                        size={20}
+                        className="ml-2"
+                        readonly
+                      />
                     </Card.Header>
                     <Card.Body className="d-flex flex-column justify-content-between gap-3">
                       <div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { FavoriteSeller } from "@/components/FavoriteSeller";
 import api from "@/services/api";
 import { IPostFeedbackSeller } from "@/services/api/urls/customer/types";
 import { ISellerPerfil } from "@/services/api/urls/seller/types";
@@ -27,6 +28,10 @@ function PerfilSeller({ params }: IProps) {
   const {
     state: { user },
   } = useAuthStore();
+
+  const userIsCustomer = user?.rules?.includes("customer");
+  const favoritesFiltered = seller?.Favorite.filter((f) => f.customer.userId === user?.id);
+  const isFavorite = favoritesFiltered && favoritesFiltered?.length > 0;
 
   const {
     control,
@@ -189,12 +194,21 @@ function PerfilSeller({ params }: IProps) {
   return (
     <div className="mb-5">
       {formModal}
-      {!customerHasFeedback && (
-        <Button className="mb-5" variant="success" onClick={handleShow}>
-          Add feedback
-        </Button>
-      )}
+      <div className="d-flex flex-column mb-3" style={{ maxWidth: "300px" }}>
+        {!customerHasFeedback && userIsCustomer && (
+          <Button variant="success" onClick={handleShow}>
+            Add feedback
+          </Button>
+        )}
 
+        <FavoriteSeller
+          isFavorite={isFavorite || false}
+          onSucess={refetchSellerPerfil}
+          favoriteId={favoritesFiltered?.[0]?.id}
+          className="mt-3"
+          sellerId={sellerId}
+        />
+      </div>
       <h3>Seller: {seller?.user.name}</h3>
       <h3>Email: {seller?.user.email}</h3>
       <h3>Phone: {seller?.phone}</h3>

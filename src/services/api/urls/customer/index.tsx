@@ -84,4 +84,18 @@ export class CustomerAPI implements IRequestMethods {
       );
     },
   };
+
+  favotiveSeller = {
+    post: (sellerId: string) => {
+      return axiosInstance.post(`/favorite/`, { sellerId });
+    },
+
+    getMyFavorites: () => {
+      return axiosInstance.get(`/favorite`);
+    },
+
+    delete: (id: string) => {
+      return axiosInstance.delete(`/favorite/${id}`);
+    }
+  }
 }

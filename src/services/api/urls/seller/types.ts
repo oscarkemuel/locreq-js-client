@@ -65,6 +65,13 @@ export type ISellerPerfil = {
   id: string;
   FeedbackSeller: IFeedbackSeller[];
   address: IAddress;
+  Favorite: {
+    id: string;
+    customerId: string;
+    customer: {
+      userId: string;
+    }
+  }[];
 }
 
 export type IGetSellerPerfil = {
