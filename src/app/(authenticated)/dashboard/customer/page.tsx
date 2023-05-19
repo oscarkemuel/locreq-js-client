@@ -14,6 +14,7 @@ import { MdArrowOutward, MdClose, MdDelete, MdEdit } from "react-icons/md";
 import { IDeliveryRequest } from "@/services/api/urls/customer/types";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
 import Link from "next/link";
+import { formatPrice } from "@/functions/format-price";
 
 function CustomerPage() {
   const { push: navigateTo } = useRouter();
@@ -256,21 +257,35 @@ function CustomerPage() {
                         {request.status.toUpperCase()}
                       </Alert>
                     </Card.Header>
-                    <Card.Body>
-                      <Card.Title>{product?.name}</Card.Title>
+                    <Card.Body className="d-flex flex-column justify-content-between gap-2">
+                      <div>
+                        <Card.Title>
+                          {product?.name} -{" "}
+                          {formatPrice(product?.price || 0, "en-US")}
+                        </Card.Title>
 
-                      <Card.Text className="m-0">
-                        <b>Seller:</b>{" "}
-                        <Link href={`/dashboard/seller/${request?.seller?.id}`}>
-                          {request?.seller?.user.name}
-                        </Link>
-                      </Card.Text>
-                      <Card.Text className="m-0">
-                        <b>Place:</b> {request.place?.name}
-                      </Card.Text>
-                      <Card.Text>
-                        <b>Quantity:</b> {request.quantity}
-                      </Card.Text>
+                        <Card.Text className="m-0">
+                          <b>Seller:</b>{" "}
+                          <Link
+                            href={`/dashboard/seller/${request?.seller?.id}`}
+                          >
+                            {request?.seller?.user.name}
+                          </Link>
+                        </Card.Text>
+                        <Card.Text>
+                          <b>Place:</b> {request.place?.name}
+                        </Card.Text>
+                        <Card.Text className="m-0">
+                          <b>Quantity:</b> {request.quantity}
+                        </Card.Text>
+                        <Card.Text>
+                          <b>Total:</b>{" "}
+                          {formatPrice(
+                            request.quantity * (product?.price || 0),
+                            "en-US"
+                          )}
+                        </Card.Text>
+                      </div>
 
                       <div className="d-flex align-items-center gap-2">
                         <Button

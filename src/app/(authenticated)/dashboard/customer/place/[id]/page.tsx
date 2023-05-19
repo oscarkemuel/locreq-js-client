@@ -2,6 +2,7 @@
 "use client";
 import { FavoriteSeller } from "@/components/FavoriteSeller";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
+import { formatPrice } from "@/functions/format-price";
 import api from "@/services/api";
 import {
   IDeliveryRequest,
@@ -166,18 +167,32 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                         {request.status.toUpperCase()}
                       </Alert>
                     </Card.Header>
-                    <Card.Body>
-                      <Card.Title>{product?.name}</Card.Title>
+                    <Card.Body className="d-flex flex-column justify-content-between gap-2">
+                      <div>
+                        <Card.Title>
+                          {product?.name} -{" "}
+                          {formatPrice(product?.price || 0, "en-US")}
+                        </Card.Title>
 
-                      <Card.Text className="m-0">
-                        <b>Seller: </b>
-                        <Link href={`/dashboard/seller/${request?.seller?.id}`}>
-                          {request?.seller?.user.name}
-                        </Link>
-                      </Card.Text>
-                      <Card.Text>
-                        <b>Quantity:</b> {request.quantity}
-                      </Card.Text>
+                        <Card.Text>
+                          <b>Seller: </b>
+                          <Link
+                            href={`/dashboard/seller/${request?.seller?.id}`}
+                          >
+                            {request?.seller?.user.name}
+                          </Link>
+                        </Card.Text>
+                        <Card.Text className="m-0">
+                          <b>Quantity:</b> {request.quantity}
+                        </Card.Text>
+                        <Card.Text>
+                          <b>Total:</b>{" "}
+                          {formatPrice(
+                            request.quantity * (product?.price || 0),
+                            "en-US"
+                          )}
+                        </Card.Text>
+                      </div>
 
                       <div className="d-flex align-items-center gap-2">
                         <Button

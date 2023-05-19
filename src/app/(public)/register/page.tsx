@@ -30,7 +30,7 @@ export default function RegisterScreen() {
     },
     {
       onSuccess: () => {
-        toast.success('Usuário cadastrado com sucesso!');
+        toast.success('User created successfully!');
         navigateTo("/login");
       },
       onError: (error: any) => {

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import { formatPrice } from "@/functions/format-price";
 import api from "@/services/api";
 import { IPostDeliveryRequest } from "@/services/api/urls/customer/types";
 import { IProduct } from "@/services/api/urls/seller/types";
@@ -148,7 +149,7 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
                         {product.description}
                       </Card.Text>
                       <Card.Text className="m-0">
-                        <b>Price:</b> R${product.price}
+                        <b>Price:</b> {formatPrice(product.price, 'en-US')}
                       </Card.Text>
                       <Card.Text>
                         <b>Stock:</b> {product.quantity}

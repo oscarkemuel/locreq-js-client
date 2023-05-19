@@ -35,6 +35,7 @@ export default function LoginScreen() {
     {
       onSuccess: ({ data }) => {
         login(data.user.token, data.user.user);
+        toast.success("Welcome! You are now logged in.");
         navigateTo("/dashboard");
       },
       onError: (error: any) => {
