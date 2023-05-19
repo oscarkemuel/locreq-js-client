@@ -30,7 +30,9 @@ function PerfilSeller({ params }: IProps) {
   } = useAuthStore();
 
   const userIsCustomer = user?.rules?.includes("customer");
-  const favoritesFiltered = seller?.Favorite.filter((f) => f.customer.userId === user?.id);
+  const favoritesFiltered = seller?.Favorite.filter(
+    (f) => f.customer.userId === user?.id
+  );
   const isFavorite = favoritesFiltered && favoritesFiltered?.length > 0;
 
   const {
@@ -195,19 +197,21 @@ function PerfilSeller({ params }: IProps) {
     <div className="mb-5">
       {formModal}
       <div className="d-flex flex-column mb-3" style={{ maxWidth: "300px" }}>
-        {!customerHasFeedback && userIsCustomer && (
+        {!customerHasFeedback && userIsCustomer && seller?.userId !== user?.id && (
           <Button variant="success" onClick={handleShow}>
             Add feedback
           </Button>
         )}
 
-        <FavoriteSeller
-          isFavorite={isFavorite || false}
-          onSucess={refetchSellerPerfil}
-          favoriteId={favoritesFiltered?.[0]?.id}
-          className="mt-3"
-          sellerId={sellerId}
-        />
+        {userIsCustomer && (
+          <FavoriteSeller
+            isFavorite={isFavorite || false}
+            onSucess={refetchSellerPerfil}
+            favoriteId={favoritesFiltered?.[0]?.id}
+            className="mt-3"
+            sellerId={sellerId}
+          />
+        )}
       </div>
       <h3>Seller: {seller?.user.name}</h3>
       <h3>Email: {seller?.user.email}</h3>

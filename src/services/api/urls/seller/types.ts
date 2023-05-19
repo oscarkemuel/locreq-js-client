@@ -77,3 +77,14 @@ export type ISellerPerfil = {
 export type IGetSellerPerfil = {
   seller: ISellerPerfil
 }
+
+export type ISeller = {
+  id: string;
+  phone: string;
+  userId: string;
+  addressId: string;
+}
+
+export type IGetMeResponse = {
+  seller: ISeller;
+}

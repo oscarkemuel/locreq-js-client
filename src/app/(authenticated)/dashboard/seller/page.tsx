@@ -21,6 +21,7 @@ function SellerPage() {
   const { push: navigateTo } = useRouter();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [deliveries, setDeliveries] = useState<IDeliveryRequest[]>([]);
+  const [sellerId, setSellerId] = useState<string>("");
 
   const {
     state: { user },
@@ -114,11 +115,12 @@ function SellerPage() {
     },
     refetchOnWindowFocus: true,
   });
-  
 
   const updateDeliveryStatusMutation = useMutation(
-    (data: { id: string, status: IStatus }) => {
-      return api.seller.deliveryRequests.updateStatus(data.id, {status: data.status});
+    (data: { id: string; status: IStatus }) => {
+      return api.seller.deliveryRequests.updateStatus(data.id, {
+        status: data.status,
+      });
     },
     {
       onSuccess: () => {
@@ -132,8 +134,20 @@ function SellerPage() {
   );
 
   const handleClickUpdateStatus = (id: string, status: IStatus) => {
-    updateDeliveryStatusMutation.mutate({id, status});
+    updateDeliveryStatusMutation.mutate({ id, status });
+  };
+
+  function getMe() {
+    return api.seller.getMe();
   }
+
+  useQuery(["getMe"], getMe, {
+    onSuccess: ({ data }) => {
+      setSellerId(data.seller.id);
+    },
+    refetchOnWindowFocus: true,
+    enabled: userIsSeller,
+  });
 
   if (!userIsSeller) {
     return (
@@ -357,6 +371,17 @@ function SellerPage() {
 
   return (
     <>
+      {sellerId && userIsSeller && (
+          <Button
+          variant="primary"
+          onClick={() => navigateTo(`/dashboard/seller/${sellerId}`)}
+          style={{ width: "100%" }}
+          className="mb-5"
+        >
+          Go to my page
+        </Button>
+      )}
+
       <Row>
         <Col>
           <div className="d-flex align-items-center justify-content-between mb-2">
@@ -462,9 +487,17 @@ function SellerPage() {
                             <Button
                               variant={option.variant}
                               className="w-100"
-                              onClick={() => handleClickUpdateStatus(request.id, option.value)}
+                              onClick={() =>
+                                handleClickUpdateStatus(
+                                  request.id,
+                                  option.value
+                                )
+                              }
                               key={option.value}
-                              disabled={request.status === option.value || request.status === "canceled"}
+                              disabled={
+                                request.status === option.value ||
+                                request.status === "canceled"
+                              }
                             >
                               {option.label}
                             </Button>

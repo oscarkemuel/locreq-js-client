@@ -3,6 +3,7 @@ import { IRequestMethods } from "../../request-methods";
 import {
   IGetAllDeliveriesResponse,
   IGetAllProducts,
+  IGetMeResponse,
   IGetProduct,
   IGetSellerPerfil,
   IPatchDeliveryStatus,
@@ -15,6 +16,10 @@ export class SellerAPI implements IRequestMethods {
 
   post(data: IPostSeller) {
     return axiosInstance.post(`${this.url}`, data);
+  }
+
+  getMe(){
+    return axiosInstance.get<IGetMeResponse>(`${this.url}/me`)
   }
 
   getPerfil(id: string) {
