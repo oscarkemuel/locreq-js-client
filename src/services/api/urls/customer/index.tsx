@@ -40,9 +40,9 @@ export class CustomerAPI implements IRequestMethods {
       return axiosInstance.delete(`${this.url}/place/${id}`);
     },
 
-    searchSellers: (id: string) => {
+    searchSellers: (id: string, search: string) => {
       return axiosInstance.get<IGetSearchSellersResponse>(
-        `${this.url}/place/${id}/nearby-sellers`
+        `${this.url}/place/${id}/nearby-sellers/${search || 'null'}`
       );
     },
   };

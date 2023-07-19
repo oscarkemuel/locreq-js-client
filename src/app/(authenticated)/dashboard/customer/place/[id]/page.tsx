@@ -40,7 +40,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
   } = useAuthStore();
 
   function searchSellers() {
-    return api.customer.places.searchSellers(id);
+    return api.customer.places.searchSellers(id, '');
   }
 
   const {
