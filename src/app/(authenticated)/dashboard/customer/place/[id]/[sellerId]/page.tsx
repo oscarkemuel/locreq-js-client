@@ -143,6 +143,9 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
                     <Card.Body>
                       <Card.Title>{product.name}</Card.Title>
                       <Card.Text className="m-0">
+                        <b>{product.model.toUpperCase()}</b>
+                      </Card.Text>
+                      <Card.Text className="m-0">
                         {product.description}
                       </Card.Text>
                       <Card.Text className="m-0">
