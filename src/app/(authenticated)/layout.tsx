@@ -37,7 +37,7 @@ export default function AuthenticatedLayout({
       <Navbar bg="dark" variant="dark" className="mb-5">
         <Container>
           <Navbar.Brand onClick={() => navigateTo("/dashboard")} role="button">
-            EntregaSystem
+            AluguelSystem
           </Navbar.Brand>
           <Nav>
             <Nav.Link onClick={() => navigateTo("/dashboard/customer")}>
