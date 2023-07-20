@@ -95,7 +95,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
             <input
               type="text"
               className="form-control"
-              placeholder="Search by model. ex: long"
+              placeholder="Search by model. ex: Funboard"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoFocus

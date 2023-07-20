@@ -71,7 +71,7 @@ function AddProductPage() {
                       render={({ field: { value, onChange } }) => (
                         <Form.Control
                           type="text"
-                          placeholder="Ex: 6'0 X 19 X 2 7/16 X 29L"
+                          placeholder={`Ex: 6'1" X 19.75" X 2.45" X 30L`}
                           value={value}
                           onChange={onChange}
                           isInvalid={!!errors.name}
@@ -111,7 +111,7 @@ function AddProductPage() {
                       render={({ field: { value, onChange } }) => (
                         <Form.Control
                           type="text"
-                          placeholder="long"
+                          placeholder="Funboard"
                           value={value}
                           onChange={onChange}
                           isInvalid={!!errors.model}
