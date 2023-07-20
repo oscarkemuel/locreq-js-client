@@ -34,7 +34,7 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
     reset,
   } = useForm({
     defaultValues: {
-      quantity: 0,
+      days: 0,
     },
   });
 
@@ -45,8 +45,6 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
     reset();
   };
   const handleShow = () => setShow(true);
-
- 
 
   function getProduts() {
     return api.seller.products.getBySeller(sellerId);
@@ -81,10 +79,10 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
 
   const onSubmit = handleSubmit((data) => {
     const payload = {
-      quantity: Number(data.quantity),
+      days: Number(data.days),
       placeId: id,
       productId: selectedProduct!.id,
-    }
+    };
 
     mutation.mutate(payload);
   });
@@ -99,18 +97,17 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
       <Modal.Body>
         <Form onSubmit={onSubmit}>
           <Form.Group className="mb-3" controlId="formBasicQuantity">
-            <Form.Label>Your quantity</Form.Label>
+            <Form.Label>Days</Form.Label>
             <Controller
               control={control}
-              name="quantity"
-              rules={{ required: true, min: 1, max: selectedProduct?.quantity }}
+              name="days"
               render={({ field: { value, onChange } }) => (
                 <Form.Control
                   type="number"
-                  placeholder="100"
+                  placeholder="2"
                   value={value}
                   onChange={onChange}
-                  isInvalid={!!errors.quantity}
+                  isInvalid={!!errors.days}
                 />
               )}
             />
@@ -149,16 +146,19 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
                         {product.description}
                       </Card.Text>
                       <Card.Text className="m-0">
-                        <b>Price:</b> {formatPrice(product.price, 'en-US')}
-                      </Card.Text>
-                      <Card.Text>
-                        <b>Stock:</b> {product.quantity}
+                        <b>Price:</b> {formatPrice(product.price, "en-US")}
                       </Card.Text>
 
+                      <Alert
+                        variant={product.available ? "success" : "danger"}
+                        className="mt-2"
+                      >
+                        {product.available ? "Available" : "Unavailable"}
+                      </Alert>
                       <div className="d-flex align-items-center gap-2">
                         <Button
                           variant="success"
-                          disabled={product.quantity === 0}
+                          disabled={!product.available}
                           onClick={() => {
                             setSelectedProduct(product);
                             handleShow();

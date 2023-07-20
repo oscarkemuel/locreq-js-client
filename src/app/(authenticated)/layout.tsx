@@ -41,10 +41,10 @@ export default function AuthenticatedLayout({
           </Navbar.Brand>
           <Nav>
             <Nav.Link onClick={() => navigateTo("/dashboard/customer")}>
-              Portal do cliente
+              Portal do locatário
             </Nav.Link>
             <Nav.Link onClick={() => navigateTo("/dashboard/seller")}>
-              Portal do vendedor
+              Portal do locador
             </Nav.Link>
             <Nav.Link onClick={logOut}>Logout</Nav.Link>
           </Nav>

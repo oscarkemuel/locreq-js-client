@@ -13,7 +13,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Alert, Button, Card, Col, Row } from "react-bootstrap";
+import { Alert, Button, Card, Col, Row, InputGroup } from "react-bootstrap";
 import {
   MdAttachMoney,
   MdClose,
@@ -34,23 +34,24 @@ function CustomerPlacePage({ params: { id } }: IProps) {
   const { push: navigateTo } = useRouter();
   const [requests, setRequests] = useState<IDeliveryRequest[]>([]);
   const [sellers, setSellers] = useState<SellerWithAddress[]>([]);
+  const [search, setSearch] = useState("");
 
   const {
     state: { user },
   } = useAuthStore();
 
   function searchSellers() {
-    return api.customer.places.searchSellers(id, '');
+    return api.customer.places.searchSellers(id, search);
   }
 
   const {
     refetch: refetchSellers,
-    isFetchedAfterMount: sellersIsFetchedAfterMount,
+    isFetching: isFetchingSellers
   } = useQuery(["searchSellers"], searchSellers, {
     onSuccess: ({ data }) => {
       setSellers(data.sellers);
     },
-    refetchOnWindowFocus: true,
+    enabled: false,
   });
 
   function getMyRequests() {
@@ -87,6 +88,26 @@ function CustomerPlacePage({ params: { id } }: IProps) {
       <Row className="mt-5">
         <Col>
           <h3 className="m-0 mb-2">Sellers around</h3>
+          <InputGroup className="mb-2">
+            <InputGroup.Text>
+              <MdSearch />
+            </InputGroup.Text>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by model. ex: long"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autoFocus
+            />
+
+            <Button
+              variant="outline-secondary"
+              onClick={() => refetchSellers()}
+            >
+              {isFetchingSellers ? "Loading..." : "Search"}
+            </Button>
+          </InputGroup>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {sellers.map((seller) => {
@@ -140,9 +161,9 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                 );
               })}
 
-              {sellersIsFetchedAfterMount && sellers.length === 0 && (
+              {sellers.length === 0 && (
                 <Alert variant="warning" className="m-auto">
-                  No sellers around!
+                  Search for sellers with your model!
                 </Alert>
               )}
             </Card.Body>
@@ -152,7 +173,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
 
       <Row className="my-5">
         <Col>
-          <h3 className="m-0 mb-2">My Requests</h3>
+          <h3 className="m-0 mb-2">My rentals</h3>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {requests.map((request) => {
@@ -175,7 +196,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                         </Card.Title>
 
                         <Card.Text>
-                          <b>Seller: </b>
+                          <b>Locator: </b>
                           <Link
                             href={`/dashboard/seller/${request?.seller?.id}`}
                           >
@@ -183,12 +204,12 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                           </Link>
                         </Card.Text>
                         <Card.Text className="m-0">
-                          <b>Quantity:</b> {request.quantity}
+                          <b>Days:</b> {request.days}
                         </Card.Text>
                         <Card.Text>
                           <b>Total:</b>{" "}
                           {formatPrice(
-                            request.quantity * (product?.price || 0),
+                            request.days * (product?.price || 0),
                             "en-US"
                           )}
                         </Card.Text>
@@ -202,7 +223,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                           }
                           disabled={
                             cancelRequestMutation.isLoading ||
-                            request.status !== "pending"
+                            request.status !== "requested"
                           }
                         >
                           <MdClose size={22} />

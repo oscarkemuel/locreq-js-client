@@ -193,6 +193,12 @@ function PerfilSeller({ params }: IProps) {
     </Modal>
   );
 
+  console.log(
+    !customerHasFeedback,
+    userIsCustomer,
+    seller?.userId !== user?.id
+  )
+
   return (
     <div className="mb-5">
       {formModal}
@@ -213,7 +219,7 @@ function PerfilSeller({ params }: IProps) {
           />
         )}
       </div>
-      <h3>Seller: {seller?.user.name}</h3>
+      <h3>Locator: {seller?.user.name}</h3>
       <h3>Email: {seller?.user.email}</h3>
       <h3>Phone: {seller?.phone}</h3>
 

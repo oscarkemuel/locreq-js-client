@@ -8,13 +8,13 @@ function HomePage() {
 
   const cards = [
     {
-      title: "Customer Portal",
-      text: "Access the Customer Portal here to make your purchases.",
+      title: "Renter Portal",
+      text: "Access the Renter Portal here to make your purchases.",
       route: "/dashboard/customer",
     },
     {
-      title: "Seller Portal",
-      text: "Access the Seller Portal here to manage your sales.",
+      title: "Locator Portal",
+      text: "Access the Locator Portal here to manage your sales.",
       route: "/dashboard/seller",
     },
   ];

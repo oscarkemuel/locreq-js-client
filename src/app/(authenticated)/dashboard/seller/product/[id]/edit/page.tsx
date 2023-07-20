@@ -26,7 +26,7 @@ function EditProductPage({ params: { id } }: IProps) {
       name: "",
       description: "",
       price: 0,
-      quantity: 0,
+      model: "",
     },
   });
 
@@ -55,7 +55,7 @@ function EditProductPage({ params: { id } }: IProps) {
       name: data.name,
       description: data.description,
       price: Number(data.price),
-      quantity: Number(data.quantity),
+      model: data.model,
     };
 
     mutation.mutate(payload);
@@ -72,7 +72,7 @@ function EditProductPage({ params: { id } }: IProps) {
       setValue('name', product.name)
       setValue('description', product.description)
       setValue('price', product.price)
-      setValue('quantity', product.quantity)
+      setValue('model', product.model)
     },
     enabled: !!id,
     refetchOnWindowFocus: false
@@ -126,18 +126,19 @@ function EditProductPage({ params: { id } }: IProps) {
 
               <Row>
                 <Col>
-                  <Form.Group className="mb-3" controlId="formProductStock">
-                    <Form.Label>Stock</Form.Label>
+                  <Form.Group className="mb-3" controlId="formProductModel">
+                    <Form.Label>Model</Form.Label>
                     <Controller
                       control={control}
-                      name="quantity"
+                      name="model"
                       rules={{ required: true }}
                       render={({ field: { value, onChange } }) => (
                         <Form.Control
-                          type="number"
+                          type="text"
+                          placeholder="long"
                           value={value}
                           onChange={onChange}
-                          isInvalid={!!errors.quantity}
+                          isInvalid={!!errors.model}
                         />
                       )}
                     />

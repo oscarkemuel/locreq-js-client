@@ -242,7 +242,7 @@ function CustomerPage() {
 
       <Row className="my-5">
         <Col>
-          <h3 className="m-0 mb-2">My Requests</h3>
+          <h3 className="m-0 mb-2">My rentals</h3>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {requests.map((request) => {
@@ -265,7 +265,7 @@ function CustomerPage() {
                         </Card.Title>
 
                         <Card.Text className="m-0">
-                          <b>Seller:</b>{" "}
+                          <b>Locator:</b>{" "}
                           <Link
                             href={`/dashboard/seller/${request?.seller?.id}`}
                           >
@@ -276,12 +276,12 @@ function CustomerPage() {
                           <b>Place:</b> {request.place?.name}
                         </Card.Text>
                         <Card.Text className="m-0">
-                          <b>Quantity:</b> {request.quantity}
+                          <b>Days:</b> {request.days}
                         </Card.Text>
                         <Card.Text>
                           <b>Total:</b>{" "}
                           {formatPrice(
-                            request.quantity * (product?.price || 0),
+                            request.days * (product?.price || 0),
                             "en-US"
                           )}
                         </Card.Text>
@@ -295,7 +295,7 @@ function CustomerPage() {
                           }
                           disabled={
                             cancelRequestMutation.isLoading ||
-                            request.status !== "pending"
+                            request.status !== "requested"
                           }
                         >
                           <MdClose size={22} />

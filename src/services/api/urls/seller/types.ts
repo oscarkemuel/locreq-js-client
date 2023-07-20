@@ -20,14 +20,14 @@ export type IProduct = {
   name: string;
   description: string;
   price: number;
-  quantity: number;
+  model: string;
+  available: boolean;
 }
 
 export type IPostProduct = {
   name: string;
   description: string;
-  price: number;
-  quantity: number;
+  model: string;
 }
 
 export type IGetAllProducts = {

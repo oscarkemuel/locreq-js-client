@@ -407,7 +407,7 @@ function SellerPage() {
                         <b>Price:</b> R${product.price}
                       </Card.Text>
                       <Card.Text>
-                        <b>Stock:</b> {product.quantity}
+                        <b>Model:</b> {product.model}
                       </Card.Text>
 
                       <div className="d-flex align-items-center gap-2">
@@ -448,7 +448,7 @@ function SellerPage() {
 
       <Row className="my-5">
         <Col>
-          <h3 className="m-0 mb-2">My Deliveries</h3>
+          <h3 className="m-0 mb-2">Rentals</h3>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {deliveries.map((request) => {
@@ -469,7 +469,7 @@ function SellerPage() {
                       <Card.Title>{product?.name}</Card.Title>
 
                       <Card.Text className="m-0">
-                        <b>Customer:</b> {request.customer?.user.name}
+                        <b>Renter:</b> {request.customer?.user.name}
                       </Card.Text>
                       <Card.Text className="m-0">
                         <b>Adderss:</b> <br />
@@ -478,7 +478,7 @@ function SellerPage() {
                         {address?.state}
                       </Card.Text>
                       <Card.Text>
-                        <b>Quantity:</b> {request.quantity}
+                        <b>Days:</b> {request.days}
                       </Card.Text>
 
                       <div className="d-flex flex-column gap-2 w-100">
