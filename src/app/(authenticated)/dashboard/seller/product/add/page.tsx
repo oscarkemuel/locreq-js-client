@@ -71,7 +71,7 @@ function AddProductPage() {
                       render={({ field: { value, onChange } }) => (
                         <Form.Control
                           type="text"
-                          placeholder="Bread"
+                          placeholder="Ex: 6'0 X 19 X 2 7/16 X 29L"
                           value={value}
                           onChange={onChange}
                           isInvalid={!!errors.name}
