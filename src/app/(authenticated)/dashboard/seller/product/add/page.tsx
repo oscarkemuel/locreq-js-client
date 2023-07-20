@@ -19,7 +19,8 @@ function AddProductPage() {
       name: "",
       description: "",
       price: 0,
-      quantity: 0,
+      startTime: "",
+      endTime: "",
     },
   });
 
@@ -48,7 +49,8 @@ function AddProductPage() {
       name: data.name,
       description: data.description,
       price: Number(data.price),
-      quantity: Number(data.quantity),
+      startTime: data.startTime,
+      endTime: data.endTime,
     };
 
     mutation.mutate(payload);
@@ -63,7 +65,7 @@ function AddProductPage() {
               <Row>
                 <Col>
                   <Form.Group className="mb-3" controlId="formProductName">
-                    <Form.Label>Name</Form.Label>
+                    <Form.Label>Service</Form.Label>
                     <Controller
                       control={control}
                       name="name"
@@ -71,7 +73,7 @@ function AddProductPage() {
                       render={({ field: { value, onChange } }) => (
                         <Form.Control
                           type="text"
-                          placeholder="Bread"
+                          placeholder="Haircut"
                           value={value}
                           onChange={onChange}
                           isInvalid={!!errors.name}
@@ -102,24 +104,6 @@ function AddProductPage() {
 
               <Row>
                 <Col>
-                  <Form.Group className="mb-3" controlId="formProductStock">
-                    <Form.Label>Stock</Form.Label>
-                    <Controller
-                      control={control}
-                      name="quantity"
-                      rules={{ required: true }}
-                      render={({ field: { value, onChange } }) => (
-                        <Form.Control
-                          type="number"
-                          value={value}
-                          onChange={onChange}
-                          isInvalid={!!errors.name}
-                        />
-                      )}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
                   <Form.Group
                     className="mb-3"
                     controlId="formProductDescription"
@@ -132,6 +116,46 @@ function AddProductPage() {
                       render={({ field: { value, onChange } }) => (
                         <Form.Control
                           type="textarea"
+                          value={value}
+                          onChange={onChange}
+                          isInvalid={!!errors.name}
+                        />
+                      )}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3" controlId="formProductStart">
+                    <Form.Label>Start time</Form.Label>
+                    <Controller
+                      control={control}
+                      name="startTime"
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <Form.Control
+                          type="datetime-local"
+                          value={value}
+                          onChange={onChange}
+                          isInvalid={!!errors.name}
+                        />
+                      )}
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="formProductEnd">
+                    <Form.Label>End time</Form.Label>
+                    <Controller
+                      control={control}
+                      name="endTime"
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <Form.Control
+                          type="datetime-local"
                           value={value}
                           onChange={onChange}
                           isInvalid={!!errors.name}

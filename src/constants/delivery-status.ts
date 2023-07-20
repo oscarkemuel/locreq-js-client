@@ -1,11 +1,11 @@
 import { IStatus } from "@/services/api/urls/customer/types"
 
 export const DELIVERY_STATUS = {
-  pending: 'warning',
-  accepted: 'primary',
+  requested: 'warning',
+  confirmed: 'info',
   rejected: 'danger',
-  delivered: 'success',
-  canceled: 'danger',
+  done: 'success',
+  canceled: 'danger'
 }
 
 interface IOption {
@@ -15,8 +15,8 @@ interface IOption {
 }
 
 export const OPTIONS_DELIVERY_STATUS: IOption[] = [
-  { value: 'pending', label: 'Pending', variant: 'warning' },
-  { value: 'accepted', label: 'Accept', variant: 'success' },
-  { value: 'delivered', label: 'Delivered', variant: 'primary' },
-  { value: 'rejected', label: 'Reject', variant: 'danger' },
+  { value: 'requested', label: 'Requested', variant: 'warning' },
+  { value: 'confirmed', label: 'Confirmed', variant: 'info' },
+  { value: 'done', label: 'Done', variant: 'success' },
+  { value: 'rejected', label: 'Rejected', variant: 'danger' },
 ]

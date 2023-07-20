@@ -20,14 +20,17 @@ export type IProduct = {
   name: string;
   description: string;
   price: number;
-  quantity: number;
+  startTime: string;
+  endTime: string;
+  available: boolean;
 }
 
 export type IPostProduct = {
   name: string;
   description: string;
   price: number;
-  quantity: number;
+  startTime: string;
+  endTime: string;
 }
 
 export type IGetAllProducts = {

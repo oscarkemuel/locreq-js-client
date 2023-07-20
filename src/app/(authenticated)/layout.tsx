@@ -37,14 +37,14 @@ export default function AuthenticatedLayout({
       <Navbar bg="dark" variant="dark" className="mb-5">
         <Container>
           <Navbar.Brand onClick={() => navigateTo("/dashboard")} role="button">
-            EntregaSystem
+            AgendaSystem
           </Navbar.Brand>
           <Nav>
             <Nav.Link onClick={() => navigateTo("/dashboard/customer")}>
               Portal do cliente
             </Nav.Link>
             <Nav.Link onClick={() => navigateTo("/dashboard/seller")}>
-              Portal do vendedor
+              Portal do prestador
             </Nav.Link>
             <Nav.Link onClick={logOut}>Logout</Nav.Link>
           </Nav>

@@ -15,6 +15,7 @@ import { IDeliveryRequest } from "@/services/api/urls/customer/types";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
 import Link from "next/link";
 import { formatPrice } from "@/functions/format-price";
+import { FormatDateTime } from "@/functions/format-datetime";
 
 function CustomerPage() {
   const { push: navigateTo } = useRouter();
@@ -242,7 +243,7 @@ function CustomerPage() {
 
       <Row className="my-5">
         <Col>
-          <h3 className="m-0 mb-2">My Requests</h3>
+          <h3 className="m-0 mb-2">My appointments</h3>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {requests.map((request) => {
@@ -265,7 +266,7 @@ function CustomerPage() {
                         </Card.Title>
 
                         <Card.Text className="m-0">
-                          <b>Seller:</b>{" "}
+                          <b>Provider:</b>{" "}
                           <Link
                             href={`/dashboard/seller/${request?.seller?.id}`}
                           >
@@ -276,12 +277,17 @@ function CustomerPage() {
                           <b>Place:</b> {request.place?.name}
                         </Card.Text>
                         <Card.Text className="m-0">
-                          <b>Quantity:</b> {request.quantity}
+                          <b>Start Time:</b>{" "}
+                          {FormatDateTime(request.Product!.startTime, "en-US")}
+                        </Card.Text>
+                        <Card.Text className="m-0 mb-1">
+                          <b>End Time:</b>{" "}
+                          {FormatDateTime(request.Product!.endTime, "en-US")}
                         </Card.Text>
                         <Card.Text>
                           <b>Total:</b>{" "}
                           {formatPrice(
-                            request.quantity * (product?.price || 0),
+                            product?.price!,
                             "en-US"
                           )}
                         </Card.Text>
@@ -295,7 +301,7 @@ function CustomerPage() {
                           }
                           disabled={
                             cancelRequestMutation.isLoading ||
-                            request.status !== "pending"
+                            request.status !== "requested"
                           }
                         >
                           <MdClose size={22} />

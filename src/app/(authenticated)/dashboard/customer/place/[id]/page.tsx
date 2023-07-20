@@ -2,6 +2,7 @@
 "use client";
 import { FavoriteSeller } from "@/components/FavoriteSeller";
 import { DELIVERY_STATUS } from "@/constants/delivery-status";
+import { FormatDateTime } from "@/functions/format-datetime";
 import { formatPrice } from "@/functions/format-price";
 import api from "@/services/api";
 import {
@@ -13,7 +14,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Alert, Button, Card, Col, Row } from "react-bootstrap";
+import { Alert, Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 import {
   MdAttachMoney,
   MdClose,
@@ -34,18 +35,19 @@ function CustomerPlacePage({ params: { id } }: IProps) {
   const { push: navigateTo } = useRouter();
   const [requests, setRequests] = useState<IDeliveryRequest[]>([]);
   const [sellers, setSellers] = useState<SellerWithAddress[]>([]);
+  const [search, setSearch] = useState("");
 
   const {
     state: { user },
   } = useAuthStore();
 
   function searchSellers() {
-    return api.customer.places.searchSellers(id, '');
+    return api.customer.places.searchSellers(id, search);
   }
 
   const {
     refetch: refetchSellers,
-    isFetchedAfterMount: sellersIsFetchedAfterMount,
+    isFetching: isFetchingSellers,
   } = useQuery(["searchSellers"], searchSellers, {
     onSuccess: ({ data }) => {
       setSellers(data.sellers);
@@ -86,7 +88,29 @@ function CustomerPlacePage({ params: { id } }: IProps) {
     <>
       <Row className="mt-5">
         <Col>
-          <h3 className="m-0 mb-2">Sellers around</h3>
+          <h3 className="m-0 mb-2">Providers around</h3>
+          <Form.Label>Search by date of birth</Form.Label>
+          <InputGroup className="mb-2">
+            <InputGroup.Text>
+              <MdSearch />
+            </InputGroup.Text>
+            <Form.Control 
+                type="datetime-local" 
+                name="dob" 
+                placeholder="Date of Birth"
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                }
+                }
+              />
+
+            <Button
+              variant="outline-secondary"
+              onClick={() => refetchSellers()}
+            >
+              {isFetchingSellers ? "Loading..." : "Search"}
+            </Button>
+          </InputGroup>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {sellers.map((seller) => {
@@ -140,9 +164,9 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                 );
               })}
 
-              {sellersIsFetchedAfterMount && sellers.length === 0 && (
+              {sellers.length === 0 && (
                 <Alert variant="warning" className="m-auto">
-                  No sellers around!
+                  No providers around!
                 </Alert>
               )}
             </Card.Body>
@@ -152,7 +176,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
 
       <Row className="my-5">
         <Col>
-          <h3 className="m-0 mb-2">My Requests</h3>
+          <h3 className="m-0 mb-2">My appointments</h3>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {requests.map((request) => {
@@ -175,7 +199,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                         </Card.Title>
 
                         <Card.Text>
-                          <b>Seller: </b>
+                          <b>Provider: </b>
                           <Link
                             href={`/dashboard/seller/${request?.seller?.id}`}
                           >
@@ -183,12 +207,17 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                           </Link>
                         </Card.Text>
                         <Card.Text className="m-0">
-                          <b>Quantity:</b> {request.quantity}
+                          <b>Start Time:</b>{" "}
+                          {FormatDateTime(request.Product!.startTime, "en-US")}
+                        </Card.Text>
+                        <Card.Text className="m-0 mb-1">
+                          <b>End Time:</b>{" "}
+                          {FormatDateTime(request.Product!.endTime, "en-US")}
                         </Card.Text>
                         <Card.Text>
                           <b>Total:</b>{" "}
                           {formatPrice(
-                            request.quantity * (product?.price || 0),
+                            product?.price!,
                             "en-US"
                           )}
                         </Card.Text>
@@ -202,7 +231,7 @@ function CustomerPlacePage({ params: { id } }: IProps) {
                           }
                           disabled={
                             cancelRequestMutation.isLoading ||
-                            request.status !== "pending"
+                            request.status !== "requested"
                           }
                         >
                           <MdClose size={22} />

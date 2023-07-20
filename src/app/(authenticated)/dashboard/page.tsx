@@ -13,8 +13,8 @@ function HomePage() {
       route: "/dashboard/customer",
     },
     {
-      title: "Seller Portal",
-      text: "Access the Seller Portal here to manage your sales.",
+      title: "Provider Portal",
+      text: "Access the Provider Portal here to manage your sales.",
       route: "/dashboard/seller",
     },
   ];

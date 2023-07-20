@@ -1,15 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import { FormatDateTime } from "@/functions/format-datetime";
 import { formatPrice } from "@/functions/format-price";
 import api from "@/services/api";
 import { IPostDeliveryRequest } from "@/services/api/urls/customer/types";
 import { IProduct } from "@/services/api/urls/seller/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { isEmpty } from "lodash";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Alert, Button, Card, Col, Form, Modal, Row } from "react-bootstrap";
-import { Controller, useForm } from "react-hook-form";
+import { Alert, Button, Card, Col, Modal, Row } from "react-bootstrap";
 import { MdAdd } from "react-icons/md";
 import { toast } from "react-toastify";
 
@@ -26,27 +25,11 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
   const [show, setShow] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    clearErrors,
-    reset,
-  } = useForm({
-    defaultValues: {
-      quantity: 0,
-    },
-  });
-
   const handleClose = () => {
     setShow(false);
     setSelectedProduct(null);
-    clearErrors();
-    reset();
   };
   const handleShow = () => setShow(true);
-
- 
 
   function getProduts() {
     return api.seller.products.getBySeller(sellerId);
@@ -79,15 +62,14 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
     }
   );
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = () => {
     const payload = {
-      quantity: Number(data.quantity),
       placeId: id,
       productId: selectedProduct!.id,
-    }
+    };
 
     mutation.mutate(payload);
-  });
+  };
 
   const formModal = (
     <Modal show={show} onHide={handleClose}>
@@ -97,37 +79,21 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={onSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicQuantity">
-            <Form.Label>Your quantity</Form.Label>
-            <Controller
-              control={control}
-              name="quantity"
-              rules={{ required: true, min: 1, max: selectedProduct?.quantity }}
-              render={({ field: { value, onChange } }) => (
-                <Form.Control
-                  type="number"
-                  placeholder="100"
-                  value={value}
-                  onChange={onChange}
-                  isInvalid={!!errors.quantity}
-                />
-              )}
-            />
-          </Form.Group>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              disabled={!isEmpty(errors) || mutation.isLoading}
-            >
-              Send
-            </Button>
-          </Modal.Footer>
-        </Form>
+        <h3>Confirm your order?</h3>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={mutation.isLoading}
+            onClick={onSubmit}
+          >
+            Yes
+          </Button>
+        </Modal.Footer>
       </Modal.Body>
     </Modal>
   );
@@ -149,16 +115,28 @@ function DeliveryResquestPage({ params: { id, sellerId } }: IProps) {
                         {product.description}
                       </Card.Text>
                       <Card.Text className="m-0">
-                        <b>Price:</b> {formatPrice(product.price, 'en-US')}
+                        <b>Price:</b> {formatPrice(product.price, "en-US")}
                       </Card.Text>
                       <Card.Text>
-                        <b>Stock:</b> {product.quantity}
+                        <b>Start Time:</b>{" "}
+                        {FormatDateTime(product.startTime, "en-US")}
                       </Card.Text>
+                      <Card.Text>
+                        <b>End Time:</b>{" "}
+                        {FormatDateTime(product.endTime, "en-US")}
+                      </Card.Text>
+
+                      <Alert
+                        variant={product.available ? "success" : "danger"}
+                        className="mt-2"
+                      >
+                        {product.available ? "Available" : "Unavailable"}
+                      </Alert>
 
                       <div className="d-flex align-items-center gap-2">
                         <Button
                           variant="success"
-                          disabled={product.quantity === 0}
+                          disabled={!product.available}
                           onClick={() => {
                             setSelectedProduct(product);
                             handleShow();

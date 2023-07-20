@@ -6,11 +6,12 @@ import { toast } from "react-toastify";
 import api from "@/services/api";
 import { useRouter } from "next/navigation";
 import { IPostProduct } from "@/services/api/urls/seller/types";
+import { convertUTCtoLocalDatetime } from "@/functions/format-datetime";
 
 interface IProps {
   params: {
     id: string;
-  }
+  };
 }
 
 function EditProductPage({ params: { id } }: IProps) {
@@ -20,13 +21,14 @@ function EditProductPage({ params: { id } }: IProps) {
     control,
     handleSubmit,
     formState: { errors },
-    setValue
+    setValue,
   } = useForm({
     defaultValues: {
       name: "",
       description: "",
       price: 0,
-      quantity: 0,
+      startTime: "",
+      endTime: "",
     },
   });
 
@@ -55,7 +57,8 @@ function EditProductPage({ params: { id } }: IProps) {
       name: data.name,
       description: data.description,
       price: Number(data.price),
-      quantity: Number(data.quantity),
+      startTime: data.startTime,
+      endTime: data.endTime,
     };
 
     mutation.mutate(payload);
@@ -65,18 +68,20 @@ function EditProductPage({ params: { id } }: IProps) {
     return api.seller.products.get(id);
   }
 
-  useQuery(['getCustomerPlace'], getCustomerPlace, {
+  useQuery(["getCustomerPlace"], getCustomerPlace, {
     onSuccess: ({ data }) => {
-      const { product } = data
+      const { product } = data;
 
-      setValue('name', product.name)
-      setValue('description', product.description)
-      setValue('price', product.price)
-      setValue('quantity', product.quantity)
+      setValue("name", product.name);
+      setValue("description", product.description);
+      setValue("price", product.price);
+      setValue("startTime", convertUTCtoLocalDatetime(new Date(product.startTime)));
+      setValue("endTime", convertUTCtoLocalDatetime(new Date(product.endTime)));
+      console.log(new Date(product.endTime).toLocaleString());
     },
     enabled: !!id,
-    refetchOnWindowFocus: false
-  })
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <Row className="mb-3">
@@ -126,24 +131,6 @@ function EditProductPage({ params: { id } }: IProps) {
 
               <Row>
                 <Col>
-                  <Form.Group className="mb-3" controlId="formProductStock">
-                    <Form.Label>Stock</Form.Label>
-                    <Controller
-                      control={control}
-                      name="quantity"
-                      rules={{ required: true }}
-                      render={({ field: { value, onChange } }) => (
-                        <Form.Control
-                          type="number"
-                          value={value}
-                          onChange={onChange}
-                          isInvalid={!!errors.quantity}
-                        />
-                      )}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
                   <Form.Group
                     className="mb-3"
                     controlId="formProductDescription"
@@ -166,6 +153,45 @@ function EditProductPage({ params: { id } }: IProps) {
                 </Col>
               </Row>
 
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3" controlId="formProductStart">
+                    <Form.Label>Start time</Form.Label>
+                    <Controller
+                      control={control}
+                      name="startTime"
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <Form.Control
+                          type="datetime-local"
+                          value={value}
+                          onChange={onChange}
+                          isInvalid={!!errors.name}
+                        />
+                      )}
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="formProductEnd">
+                    <Form.Label>End time</Form.Label>
+                    <Controller
+                      control={control}
+                      name="endTime"
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <Form.Control
+                          type="datetime-local"
+                          value={value}
+                          onChange={onChange}
+                          isInvalid={!!errors.name}
+                        />
+                      )}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
               <div className="d-flex align-items-center w-100 gap-2">
                 <Button
                   variant="primary"

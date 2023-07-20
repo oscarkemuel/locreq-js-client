@@ -213,7 +213,7 @@ function PerfilSeller({ params }: IProps) {
           />
         )}
       </div>
-      <h3>Seller: {seller?.user.name}</h3>
+      <h3>Provider: {seller?.user.name}</h3>
       <h3>Email: {seller?.user.email}</h3>
       <h3>Phone: {seller?.phone}</h3>
 

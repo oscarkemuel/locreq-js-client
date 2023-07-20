@@ -4,6 +4,7 @@ import {
   DELIVERY_STATUS,
   OPTIONS_DELIVERY_STATUS,
 } from "@/constants/delivery-status";
+import { FormatDateTime } from "@/functions/format-datetime";
 import api from "@/services/api";
 import { IDeliveryRequest, IStatus } from "@/services/api/urls/customer/types";
 import { IPostSeller, IProduct } from "@/services/api/urls/seller/types";
@@ -372,7 +373,7 @@ function SellerPage() {
   return (
     <>
       {sellerId && userIsSeller && (
-          <Button
+        <Button
           variant="primary"
           onClick={() => navigateTo(`/dashboard/seller/${sellerId}`)}
           style={{ width: "100%" }}
@@ -406,8 +407,13 @@ function SellerPage() {
                       <Card.Text className="m-0">
                         <b>Price:</b> R${product.price}
                       </Card.Text>
-                      <Card.Text>
-                        <b>Stock:</b> {product.quantity}
+                      <Card.Text className="m-0">
+                        <b>Start Time:</b>{" "}
+                        {FormatDateTime(product.startTime, "en-US")}
+                      </Card.Text>
+                      <Card.Text className="m-0 mb-1">
+                        <b>End Time:</b>{" "}
+                        {FormatDateTime(product.endTime, "en-US")}
                       </Card.Text>
 
                       <div className="d-flex align-items-center gap-2">
@@ -448,7 +454,7 @@ function SellerPage() {
 
       <Row className="my-5">
         <Col>
-          <h3 className="m-0 mb-2">My Deliveries</h3>
+          <h3 className="m-0 mb-2">My Appointments</h3>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
               {deliveries.map((request) => {
@@ -472,13 +478,12 @@ function SellerPage() {
                         <b>Customer:</b> {request.customer?.user.name}
                       </Card.Text>
                       <Card.Text className="m-0">
-                        <b>Adderss:</b> <br />
-                        {address?.street}, {address?.number}
-                        {" - "} {address?.neighborhood} - {address?.city}/
-                        {address?.state}
+                        <b>Start Time:</b>{" "}
+                        {FormatDateTime(request.Product!.startTime, "en-US")}
                       </Card.Text>
-                      <Card.Text>
-                        <b>Quantity:</b> {request.quantity}
+                      <Card.Text className="m-0 mb-1">
+                        <b>End Time:</b>{" "}
+                        {FormatDateTime(request.Product!.endTime, "en-US")}
                       </Card.Text>
 
                       <div className="d-flex flex-column gap-2 w-100">

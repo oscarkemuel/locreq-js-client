@@ -22,7 +22,7 @@ export default function PublicLayout({
       <Navbar bg="dark" variant="dark" className="mb-5">
         <Container>
           <Navbar.Brand onClick={() => navigateTo("/")} role="button">
-            EntregaSystem
+            AgendaSystem
           </Navbar.Brand>
           <Nav>
               <Nav.Link onClick={() => navigateTo("/login")}>Login</Nav.Link>
